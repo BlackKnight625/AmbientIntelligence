@@ -12,16 +12,22 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import io.netty.util.internal.logging.InternalLoggerFactory;
+import io.netty.util.internal.logging.JdkLoggerFactory;
+
 public class MainActivity extends AppCompatActivity {
 
-    public static final String IP_MESSAGE = "com.example.rafaeltestapp.IP_MESSAGE";
-    public static final String PORT_MESSAGE = "com.example.rafaeltestapp.PORT_MESSAGE";
-    public static final String ERROR_MESSAGE = "com.example.rafaeltestapp.ERROR_MESSAGE";
+    public static final String IP_MESSAGE = "pt.tecnico.cameraapp.IP_MESSAGE";
+    public static final String PORT_MESSAGE = "pt.tecnico.cameraapp.PORT_MESSAGE";
+    public static final String ERROR_MESSAGE = "pt.tecnico.cameraapp.ERROR_MESSAGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //This is a dark magic line that makes some things not explode, for some reason
+        InternalLoggerFactory.setDefaultFactory(JdkLoggerFactory.INSTANCE);
 
         Intent intent;
 

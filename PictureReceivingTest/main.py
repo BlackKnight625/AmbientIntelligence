@@ -1,16 +1,27 @@
-# This is a sample Python script.
+import sys
+sys.path.insert(1, '../GrpcContract/target')
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import grpc
+from concurrent import futures
+import communication_pb2_grpc as pb2_grpc
+import communication_pb2 as pb2
 
+class CameraToCentralSystemServiceService(pb2_grpc.CameraToCentralSystemServiceServicer):
+    def __init__(self, *args, **kwargs):
+        pass
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+    def send_footage(self, request, context):
+        bytes = request.picture
+        ts = request.time
 
+        return pb2.FootageAck()
 
-# Press the green button in the gutter to run the script.
+def serve():
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    pb2_grpc.add_CameraToCentralSystemServiceServicer_to_server(CameraToCentralSystemServiceService(), server)
+    server.add_insecure_port('[::]:50051')
+    server.start()
+    server.wait_for_termination()
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    serve()

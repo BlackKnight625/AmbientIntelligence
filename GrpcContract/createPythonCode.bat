@@ -1,1 +1,1 @@
-python -m grpc_tools.protoc -I../../protos --python_out=. --grpc_python_out=. ../../protos/route_guide.proto
+python -m grpc_tools.protoc --proto_path=src/main/proto/. src/main/proto/communication.proto --python_out=target/. --grpc_python_out=target/.

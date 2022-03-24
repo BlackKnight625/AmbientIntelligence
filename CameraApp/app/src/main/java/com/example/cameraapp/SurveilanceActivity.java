@@ -42,6 +42,8 @@ public class SurveilanceActivity extends AppCompatActivity {
         //Others
     private boolean destroyed = false;
     private Semaphore semaphore = new Semaphore(1);
+    private int totalPhotos = 0;
+    private long startedMillis;
 
     // Other methods
 
@@ -49,6 +51,8 @@ public class SurveilanceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_surveilance);
+
+        startedMillis = System.currentTimeMillis();
 
         if(safeCameraOpen()) {
             preview = new CameraPreview(getApplicationContext(), camera);
@@ -92,24 +96,20 @@ public class SurveilanceActivity extends AppCompatActivity {
                         try {
                             Thread.sleep(250);
 
-                            System.out.println("About to take picture");
-
                             semaphore.acquire();
-
-                            System.out.println("Semaphore before taking picture: " + semaphore.availablePermits());
 
                             camera.takePicture(null, null, SurveilanceActivity.this::onPictureTaken);
                             photoSound.start();
 
-                            System.out.println("Took picture");
-
                             semaphore.acquire(); //Waiting for the "onPictureTaken" thread to finish
-
-                            System.out.println("Acquired semaphore: " + semaphore.availablePermits());
 
                             semaphore.release();
 
                             camera.startPreview();
+
+                            totalPhotos++;
+
+                            System.out.println("Photos per second: " + (totalPhotos / ((System.currentTimeMillis() - startedMillis) / 1000.0)));
                         } catch (InterruptedException e) {
                             errorSendToMainScreen(e.getMessage(), e);
                         }

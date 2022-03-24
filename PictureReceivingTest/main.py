@@ -14,6 +14,8 @@ class CameraToCentralSystemServiceService(pb2_grpc.CameraToCentralSystemServiceS
         bytes = request.picture
         ts = request.time
 
+        print("Received footage! Size: ", len(bytes))
+
         return pb2.FootageAck()
 
 def serve():

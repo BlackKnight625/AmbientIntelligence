@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">CameraApp</string>
+    <string name="enter_ip">Enter Central System IP</string>
+    <string name="enter_port">Enter Central System Port</string>
+    <string name="send">Send</string>
+    <string name="error">Error while connecting to Central System:</string>
+    <string name="wrong_format">Wrong number format:</string>
+    <string name="error_open_camera">Error opening the camera:</string>
+</resources>

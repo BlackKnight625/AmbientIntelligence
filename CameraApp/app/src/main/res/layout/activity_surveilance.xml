@@ -6,4 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".SurveilanceActivity">
 
+    <FrameLayout
+        android:id="@+id/cameraPreview"
+        android:layout_width="411dp"
+        android:layout_height="732dp"
+        android:rotation="0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

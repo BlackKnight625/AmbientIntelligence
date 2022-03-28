@@ -1,30 +1,25 @@
 package com.example.cameraapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.protobuf.ByteString;
+
+import java.io.ByteArrayOutputStream;
+import java.util.Calendar;
+import java.util.concurrent.Semaphore;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.grpc.stub.StreamObserver;
 import pt.tecnico.moms.grpc.CameraToCentralSystemServiceGrpc;
 import pt.tecnico.moms.grpc.Communication;
-
-import java.io.IOException;
-import java.net.Socket;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class SurveilanceActivity extends AppCompatActivity {
 
@@ -158,6 +153,17 @@ public class SurveilanceActivity extends AppCompatActivity {
         if(stub != null) {
             Calendar currentTime = Calendar.getInstance();
 
+            System.out.println("Took picture of size: " + bytes.length);
+
+            Bitmap array = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            array.compress(Bitmap.CompressFormat.JPEG, 50, out);
+
+            byte[] compressedPicture = out.toByteArray();
+
+            System.out.println("Compressed picture to size: " + compressedPicture.length);
+
             Communication.Timestamp timestamp = Communication.Timestamp.newBuilder().
                     setSeconds(currentTime.get(Calendar.SECOND)).
                     setMinutes(currentTime.get(Calendar.MINUTE)).
@@ -168,12 +174,12 @@ public class SurveilanceActivity extends AppCompatActivity {
                     build();
 
             Communication.Footage footage = Communication.Footage.newBuilder().
-                    setPicture(ByteString.copyFrom(bytes)).
+                    setPicture(ByteString.copyFrom(compressedPicture)).
                     setTime(timestamp).
                     build();
 
             //Sending the footage and creating a new observer that knows the length of the sent footage
-            stub.sendFootage(footage, new FootageSendObserver(bytes.length));
+            stub.sendFootage(footage, new FootageSendObserver(compressedPicture.length));
         }
 
         semaphore.release();

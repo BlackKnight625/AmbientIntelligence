@@ -1,6 +1,8 @@
 syntax = "proto3";
 package pt.tecnico.moms.grpc;
 
+// Camera <-> Central System
+
 message Footage {
     bytes picture = 1;
     Timestamp time = 2;
@@ -21,4 +23,82 @@ message Timestamp {
 
 service CameraToCentralSystemService {
     rpc send_footage(Footage) returns (FootageAck);
+}
+
+// Smartphone App <-> Central System
+
+message ItemId {
+    string id = 1;
+}
+
+message Point {
+    int32 x = 1;
+    int32 y = 2;
+}
+
+message VideoFootage {
+    repeated Footage pictures = 1;
+}
+
+message ClickedAreaInformation {
+    ItemInformation clickedItem = 1;
+    bool selected = 2; //True if the item was unselected and is now being selected. False if the item was already selected, so it should now be unselected
+}
+
+message ItemInformation {
+    ItemId itemId = 1;
+    bool tracked = 2;
+    bool locked = 3;
+}
+
+message SearchParameters {
+    string itemName = 1;
+}
+
+message SearchResponse {
+    repeated ItemInformation searchResults = 1;
+}
+
+message Ack {}
+
+service SmartphoneAppToCentralSystemService {
+    /* Called when the user has an item selected on the "find" menu and presses "locate".
+        Returns video footage of the last seen location of the item.
+     */
+    rpc locateItem(ItemId) returns (VideoFootage);
+
+    /* Called when the user clicks on the screen during the "Surveillance" view
+        to select an item that's near the area he clicked on, or to deselect an already selected item
+        near the clicked area.
+        Returns information about the item being clicked on, or null if there's no item nearby.
+        Also returns a bool saying if the item being clicked on is now selected or unselected
+     */
+    rpc clickedArea(Point) returns (ClickedAreaInformation);
+
+    /* Called when the user clicks "track" while having an item selected that's untracked.
+        Returns an Ack.
+     */
+    rpc trackItem(ItemId) returns (Ack);
+
+    /* Called when the user clicks "untrack" while having an item selected that's tracked.
+        Returns an Ack.
+     */
+    rpc untrackItem(ItemId) returns (Ack);
+
+    /* Called when the user clicks "lock" while having an item selected that's unlocked.
+        Returns an Ack.
+     */
+    rpc lockItem(ItemId) returns (Ack);
+
+    /* Called when the user clicks "unlock" while having an item selected that's locked.
+        Returns an Ack.
+     */
+    rpc unlockItem(ItemId) returns (Ack);
+
+    /* Called when the user clicks "search" after having typed at least 1 letter in the
+        "search item" text box.
+        Returns a list containing all tracked items whose names start with the given letters.
+        If there are no letters, then return all tracked items.
+     */
+    rpc searchItem(SearchParameters) returns (SearchResponse);
 }

@@ -17,7 +17,10 @@ class CameraToCentralSystemServiceService(pb2_grpc.CameraToCentralSystemServiceS
         ts = request.time
         img = cv2.imdecode(np.frombuffer(img_bytes, np.uint8), -1)
 
-        cv2.imshow("Message", img)
+        cv2.namedWindow("output", cv2.WINDOW_NORMAL)    # Create window with freedom of dimensions
+        canva = cv2.resize(img, (960, 540))                # Resize image
+
+        cv2.imshow("Message", canva)
         cv2.waitKey(1)
 
         #print("Received footage! Size: ", len(img_bytes))

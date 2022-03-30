@@ -1,11 +1,14 @@
 package com.example.smartphoneapp.grpc;
 
+import com.example.smartphoneapp.grpc.observers.LocateItemObserver;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Semaphore;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import pt.tecnico.moms.grpc.CameraToCentralSystemServiceGrpc;
+import pt.tecnico.moms.grpc.Communication;
 import pt.tecnico.moms.grpc.SmartphoneAppToCentralSystemServiceGrpc;
 
 public class CentralSystemFrontend {
@@ -40,8 +43,12 @@ public class CentralSystemFrontend {
 
     // Service methods
 
-    public CompletableFuture locateItem() {
+    public void locateItem(String id, LocateItemObserver footageReceivedObserver) {
+        waitForLoadedStub();
 
+        Communication.ItemId itemId = getIdFrom(id);
+
+        stub.locateItem(itemId, footageReceivedObserver);
     }
 
     // Other methods
@@ -52,5 +59,11 @@ public class CentralSystemFrontend {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public Communication.ItemId getIdFrom(String id) {
+        return Communication.ItemId.newBuilder()
+                .setId(id)
+                .build();
     }
 }

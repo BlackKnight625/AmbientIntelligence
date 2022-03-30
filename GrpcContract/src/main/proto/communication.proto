@@ -40,11 +40,6 @@ message VideoFootage {
     repeated Footage pictures = 1;
 }
 
-message ClickedAreaInformation {
-    ItemInformation clickedItem = 1;
-    bool selected = 2; //True if the item was unselected and is now being selected. False if the item was already selected, so it should now be unselected
-}
-
 message ItemInformation {
     ItemId itemId = 1;
     bool tracked = 2;
@@ -59,6 +54,18 @@ message SearchResponse {
     repeated ItemInformation searchResults = 1;
 }
 
+message PhotoResponse {
+    enum ResponseStatus {
+        OK = 0;
+        NO_ITEM_FOUND = 1;
+        MULTIPLE_ITEMS_FOUND = 2;
+        ITEM_ALREADY_EXISTS = 3;
+    }
+
+    ItemId newItemId = 1;
+    ResponseStatus status = 2;
+}
+
 message Ack {}
 
 service SmartphoneAppToCentralSystemService {
@@ -67,15 +74,30 @@ service SmartphoneAppToCentralSystemService {
      */
     rpc locateItem(ItemId) returns (VideoFootage);
 
-    /* Called when the user clicks on the screen during the "Surveillance" view
-        to select an item that's near the area he clicked on, or to deselect an already selected item
-        near the clicked area.
-        Returns information about the item being clicked on, or null if there's no item nearby.
-        Also returns a bool saying if the item being clicked on is now selected or unselected
+    /* Called when the user takes a photograph of an item that he wants to track.
+        Returns a response saying if everything's OK or NO_ITEM_FOUND no item was identified in the picture or MULTIPLE_ITEMS_FOUND
+       if multiple items were found in the picture or ITEM_ALREADY_EXISTS if the identified item already exists in the system
+       (independently if it's currently being tracked or not)
+        If everything's OK, then a new ID is created for the identified item and gets returned.
      */
-    rpc clickedArea(Point) returns (ClickedAreaInformation);
+    rpc photoTaken(Footage) returns (PhotoResponse);
 
-    /* Called when the user clicks "track" while having an item selected that's untracked.
+    /* Called when the user clicks "confirm insertion and track" after taking a photograph of a
+        previously un-existent item.
+        Returns an Ack.
+     */
+    rpc confirmItemInsertion(ItemId) returns (Ack);
+
+    /* Called when the user clicks "search" after having typed at least 1 letter in the
+        "search item" text box, or if the user just opened the Search view.
+        Returns a list containing all tracked items whose names start with the given letters.
+        If there are no letters, then return all tracked items (this happens when the user first opens the Search view,
+        so he may see all items before searching for specific ones).
+     */
+    rpc searchItem(SearchParameters) returns (SearchResponse);
+
+    /* Called when the user clicks "track" while having an item selected that's untracked, or
+        when
         Returns an Ack.
      */
     rpc trackItem(ItemId) returns (Ack);
@@ -95,10 +117,8 @@ service SmartphoneAppToCentralSystemService {
      */
     rpc unlockItem(ItemId) returns (Ack);
 
-    /* Called when the user clicks "search" after having typed at least 1 letter in the
-        "search item" text box.
-        Returns a list containing all tracked items whose names start with the given letters.
-        If there are no letters, then return all tracked items.
+    /* Called when the user clicks "remove" while having an item selected.
+        Returns an Ack.
      */
-    rpc searchItem(SearchParameters) returns (SearchResponse);
+    rpc removeItem(ItemId) returns (Ack);
 }

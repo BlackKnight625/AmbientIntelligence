@@ -1,5 +1,7 @@
 package com.example.smartphoneapp.grpc.observers;
 
+import java.util.List;
+
 import io.grpc.stub.StreamObserver;
 import pt.tecnico.moms.grpc.Communication;
 
@@ -7,12 +9,11 @@ public class LocateItemObserver implements StreamObserver<Communication.VideoFoo
 
     @Override
     public void onNext(Communication.VideoFootage value) {
-        onNext();
-        //TODO
+        onNext(value.getPicturesList());
     }
 
-    public void onNext() {
-
+    public void onNext(List<Communication.Footage> pictures) {
+        //TODO
     }
 
     @Override

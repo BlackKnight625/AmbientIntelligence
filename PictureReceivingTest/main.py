@@ -12,9 +12,9 @@ class CameraToCentralSystemServiceService(pb2_grpc.CameraToCentralSystemServiceS
     def __init__(self, *args, **kwargs):
         pass
 
-    def send_footage(self, request, context):
-        img_bytes = request.picture
-        ts = request.time
+    def send_footage(self, footage, context):
+        img_bytes = footage.picture
+        timeStamp = footage.time
         img = cv2.imdecode(np.frombuffer(img_bytes, np.uint8), -1)
 
         cv2.namedWindow("output", cv2.WINDOW_NORMAL)    # Create window with freedom of dimensions

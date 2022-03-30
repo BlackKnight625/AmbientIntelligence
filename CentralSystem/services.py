@@ -5,7 +5,7 @@ sys.path.insert(1, '../GrpcContract/target')
 import communication_pb2_grpc as pb2_grpc
 import communication_pb2 as pb2
 
-
+"""This class handles messages that were sent from the Surveillance Cameras (Camera App)"""
 class CameraToCentralSystemServiceService(pb2_grpc.CameraToCentralSystemServiceServicer):
     def __init__(self, *args, **kwargs):
         pass

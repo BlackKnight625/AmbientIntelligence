@@ -1,7 +1,9 @@
 package com.example.smartphoneapp.grpc;
 
 import com.example.smartphoneapp.grpc.observers.LocateItemObserver;
+import com.google.protobuf.ByteString;
 
+import java.util.Calendar;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Semaphore;
 
@@ -49,6 +51,23 @@ public class CentralSystemFrontend {
         Communication.ItemId itemId = getIdFrom(id);
 
         stub.locateItem(itemId, footageReceivedObserver);
+    }
+
+    public void photoTaken(ByteString footageBytes, Calendar currentTime) {
+        Communication.Timestamp timestamp = Communication.Timestamp.newBuilder().
+                setSeconds(currentTime.get(Calendar.SECOND)).
+                setMinutes(currentTime.get(Calendar.MINUTE)).
+                setHour(currentTime.get(Calendar.HOUR)).
+                setDay(currentTime.get(Calendar.DAY_OF_MONTH)).
+                setMonth(currentTime.get(Calendar.MONTH)).
+                setYear(currentTime.get(Calendar.YEAR)).
+                build();
+
+        Communication.Footage footage = Communication.Footage.newBuilder().
+                setPicture(footageBytes).
+                setTime(timestamp).
+                build();
+
     }
 
     // Other methods

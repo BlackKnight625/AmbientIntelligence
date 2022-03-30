@@ -4,6 +4,7 @@ sys.path.insert(1, '../GrpcContract/target')
 
 import communication_pb2_grpc as pb2_grpc
 import communication_pb2 as pb2
+import imageProcessing
 
 """This class handles messages that were sent from the Surveillance Cameras (Camera App)"""
 class CameraToCentralSystemServiceService(pb2_grpc.CameraToCentralSystemServiceServicer):
@@ -12,6 +13,8 @@ class CameraToCentralSystemServiceService(pb2_grpc.CameraToCentralSystemServiceS
 
     def send_footage(self, request, context):
         img_bytes = request.picture
+        
+        items, locations = imageProcessing.processImage(img_bytes)
 
         print("Received footage! Size: ", len(img_bytes))
 

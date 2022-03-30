@@ -37,7 +37,7 @@ message Point {
 }
 
 message VideoFootage {
-    repeated Footage pictures = 1;
+    repeated Footage pictures = 1; //Same as Java List<Footage>
 }
 
 message ItemInformation {
@@ -51,7 +51,7 @@ message SearchParameters {
 }
 
 message SearchResponse {
-    repeated ItemInformation searchResults = 1;
+    repeated ItemInformation searchResults = 1; //Same as Java List<ItemInformatio>
 }
 
 message PhotoResponse {
@@ -70,7 +70,7 @@ message Ack {}
 
 service SmartphoneAppToCentralSystemService {
     /* Called when the user has an item selected on the "find" menu and presses "locate".
-        Returns video footage of the last seen location of the item.
+        Returns video footage of the last seen location of the item (last 5 seconds).
      */
     rpc locateItem(ItemId) returns (VideoFootage);
 

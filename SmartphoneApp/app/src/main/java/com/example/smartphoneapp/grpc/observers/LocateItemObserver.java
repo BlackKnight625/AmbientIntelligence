@@ -7,7 +7,12 @@ public class LocateItemObserver implements StreamObserver<Communication.VideoFoo
 
     @Override
     public void onNext(Communication.VideoFootage value) {
+        onNext();
         //TODO
+    }
+
+    public void onNext() {
+
     }
 
     @Override

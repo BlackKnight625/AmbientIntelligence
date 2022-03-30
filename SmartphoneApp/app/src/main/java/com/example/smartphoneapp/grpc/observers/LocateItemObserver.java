@@ -9,10 +9,10 @@ public class LocateItemObserver implements StreamObserver<Communication.VideoFoo
 
     @Override
     public void onNext(Communication.VideoFootage value) {
-        onNext(value.getPicturesList());
+        onNext(value.getPicturesList(), value.getItemBoundingBoxesList());
     }
 
-    public void onNext(List<Communication.Footage> pictures) {
+    public void onNext(List<Communication.Footage> pictures, List<Communication.BoundingBox> boundingBoxes) {
         //TODO
     }
 

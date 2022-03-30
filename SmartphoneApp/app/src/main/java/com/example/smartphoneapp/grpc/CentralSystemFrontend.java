@@ -26,7 +26,6 @@ public class CentralSystemFrontend {
         //Coms related
     private SmartphoneAppToCentralSystemServiceGrpc.SmartphoneAppToCentralSystemServiceStub stub = null;
     private ManagedChannel channel;
-    private int timeout = 2000; //2 seconds timeout for messages
     private Semaphore semaphore = new Semaphore(0);
 
     // Public attributes

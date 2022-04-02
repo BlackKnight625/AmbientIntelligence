@@ -9,9 +9,12 @@ def processImage(image):
     items and a list of their locations"""
     pass
 
+def getImageFromBytes(bytes):
+    return cv2.imdecode(np.frombuffer(bytes, np.uint8), -1)
+
 def getImageFromBytesFile(imageFilename):
     imageFileObj = open(imageFilename, "rb")
     imageBinaryBytes = imageFileObj.read()
     imageFileObj.close()
 
-    return cv2.imdecode(np.frombuffer(imageBinaryBytes, np.uint8), -1)
+    return getImageFromBytes(imageBinaryBytes)

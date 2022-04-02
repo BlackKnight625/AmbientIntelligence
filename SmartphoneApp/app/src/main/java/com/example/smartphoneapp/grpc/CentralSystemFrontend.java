@@ -1,15 +1,21 @@
 package com.example.smartphoneapp.grpc;
 
+import com.example.smartphoneapp.grpc.observers.ConfirmItemInsertionObserver;
 import com.example.smartphoneapp.grpc.observers.LocateItemObserver;
+import com.example.smartphoneapp.grpc.observers.LockItemObserver;
+import com.example.smartphoneapp.grpc.observers.PhotoTakenObserver;
+import com.example.smartphoneapp.grpc.observers.RemoveItemObserver;
+import com.example.smartphoneapp.grpc.observers.SearchItemObserver;
+import com.example.smartphoneapp.grpc.observers.TrackItemObserver;
+import com.example.smartphoneapp.grpc.observers.UnlockItemObserver;
+import com.example.smartphoneapp.grpc.observers.UntrackItemObserver;
 import com.google.protobuf.ByteString;
 
 import java.util.Calendar;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Semaphore;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import pt.tecnico.moms.grpc.CameraToCentralSystemServiceGrpc;
 import pt.tecnico.moms.grpc.Communication;
 import pt.tecnico.moms.grpc.SmartphoneAppToCentralSystemServiceGrpc;
 
@@ -20,7 +26,6 @@ public class CentralSystemFrontend {
         //Coms related
     private SmartphoneAppToCentralSystemServiceGrpc.SmartphoneAppToCentralSystemServiceStub stub = null;
     private ManagedChannel channel;
-    private int timeout = 2000; //2 seconds timeout for messages
     private Semaphore semaphore = new Semaphore(0);
 
     // Public attributes
@@ -53,7 +58,11 @@ public class CentralSystemFrontend {
         stub.locateItem(itemId, footageReceivedObserver);
     }
 
-    public void photoTaken(ByteString footageBytes, Calendar currentTime) {
+    public void photoTaken(ByteString footageBytes, Calendar currentTime, PhotoTakenObserver photoStatusObserver) {
+        waitForLoadedStub();
+
+        //Note: Calendar.getInstance() returns a Calendar with the current timestamp
+
         Communication.Timestamp timestamp = Communication.Timestamp.newBuilder().
                 setSeconds(currentTime.get(Calendar.SECOND)).
                 setMinutes(currentTime.get(Calendar.MINUTE)).
@@ -68,6 +77,53 @@ public class CentralSystemFrontend {
                 setTime(timestamp).
                 build();
 
+        stub.photoTaken(footage, photoStatusObserver);
+    }
+
+    public void confirmItemInsertion(String id, ConfirmItemInsertionObserver itemInsertionAckObserver) {
+        waitForLoadedStub();
+
+        stub.confirmItemInsertion(getIdFrom(id), itemInsertionAckObserver);
+    }
+
+    public void searchItem(String itemName, SearchItemObserver searchedItemsObserver) {
+        waitForLoadedStub();
+
+        Communication.SearchParameters parameters = Communication.SearchParameters.newBuilder().
+                setItemName(itemName).
+                build();
+
+        stub.searchItem(parameters, searchedItemsObserver);
+    }
+
+    public void trackItem(String id, TrackItemObserver trackingItemAckObserver) {
+        waitForLoadedStub();
+
+        stub.trackItem(getIdFrom(id), trackingItemAckObserver);
+    }
+
+    public void untrackItem(String id, UntrackItemObserver untrackingItemAckObserver) {
+        waitForLoadedStub();
+
+        stub.untrackItem(getIdFrom(id), untrackingItemAckObserver);
+    }
+
+    public void lockItem(String id, LockItemObserver lockingItemAckObserver) {
+        waitForLoadedStub();
+
+        stub.lockItem(getIdFrom(id), lockingItemAckObserver);
+    }
+
+    public void unlockItem(String id, UnlockItemObserver unlockingItemAckObserver) {
+        waitForLoadedStub();
+
+        stub.unlockItem(getIdFrom(id), unlockingItemAckObserver);
+    }
+
+    public void removeItem(String id, RemoveItemObserver removingItemAckObserver) {
+        waitForLoadedStub();
+
+        stub.removeItem(getIdFrom(id), removingItemAckObserver);
     }
 
     // Other methods

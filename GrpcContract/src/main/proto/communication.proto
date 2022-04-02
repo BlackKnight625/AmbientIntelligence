@@ -38,6 +38,12 @@ message Point {
 
 message VideoFootage {
     repeated Footage pictures = 1; //Same as Java List<Footage>
+    repeated BoundingBox itemBoundingBoxes = 2;
+}
+
+message BoundingBox {
+    Point high = 1; //For the bounding box's point with the highest coordinates
+    Point low = 2; //For the bounding box's point with the lowest coordinates
 }
 
 message ItemInformation {
@@ -70,7 +76,8 @@ message Ack {}
 
 service SmartphoneAppToCentralSystemService {
     /* Called when the user has an item selected on the "find" menu and presses "locate".
-        Returns video footage of the last seen location of the item (last 5 seconds).
+        Returns video footage of the last seen location of the item (last 5 seconds), as well
+        as the corresponding item's bounding box.
      */
     rpc locateItem(ItemId) returns (VideoFootage);
 

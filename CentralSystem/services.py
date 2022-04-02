@@ -17,6 +17,12 @@ class CameraToCentralSystemServiceService(pb2_grpc.CameraToCentralSystemServiceS
         img_bytes = request.picture
 
         items, locations = imageProcessing.processImage(imageProcessing.getImageFromBytes(img_bytes))
+        print("Items:")
+        print(items)
+        print("\n")
+        print("Locations:")
+        print(locations)
+        print("\n")
 
         print("Received footage! Size: ", len(img_bytes))
 

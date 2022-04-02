@@ -6,7 +6,6 @@ import communication_pb2_grpc as pb2_grpc
 import communication_pb2 as pb2
 import imageProcessing
 import footageStorage as fs
-from footageStorage import footageStorage as storage
 
 """This class handles messages that were sent from the Surveillance Cameras (Camera App)"""
 class CameraToCentralSystemServiceService(pb2_grpc.CameraToCentralSystemServiceServicer):
@@ -26,6 +25,9 @@ class CameraToCentralSystemServiceService(pb2_grpc.CameraToCentralSystemServiceS
 
         print("Received footage! Size: ", len(img_bytes))
 
+        for i in range(len(items)):
+            pass
+
         return pb2.FootageAck()
 
 """This class handles messages that were sent from the SmartPhone App"""
@@ -33,31 +35,31 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
     def __init__(self, *args, **kwargs):
         pass
 
-    def locateItem(self, itemID, context): # Returns 
+    def locateItem(self, itemID, context): # Returns VideoFootage
         id = itemID.id
         pass
 
-    def photoTaken(self, footage, context): # Returns
+    def photoTaken(self, footage, context): # Returns PhotoResponse
         pass
 
-    def confirmItemInsertion(self, itemID, context): # Returns
+    def confirmItemInsertion(self, itemID, context): # Returns Ack
         pass
 
-    def searchItem(self, searchParameters, context): # Returns
+    def searchItem(self, searchParameters, context): # Returns SearchResponse
         pass
 
-    def trackItem(self, itemID, context): # Returns
+    def trackItem(self, itemID, context): # Returns Ack
         pass
 
-    def untrackItem(self, itemID, context): # Returns
+    def untrackItem(self, itemID, context): # Returns Ack
         pass
 
-    def lockItem(self, itemID, context): # Returns
+    def lockItem(self, itemID, context): # Returns Ack
         pass
 
-    def unlockItem(self, itemID, context): # Returns
+    def unlockItem(self, itemID, context): # Returns Ack
         pass
 
-    def removeItem(self, itemID, context): # Returns
+    def removeItem(self, itemID, context): # Returns Ack
         pass
 

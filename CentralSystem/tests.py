@@ -1,7 +1,6 @@
 import unittest
 import imageProcessing
 import footageStorage as fs
-from footageStorage import footageStorage as storage
 import imageProcessing as processing
 import cv2
 
@@ -23,26 +22,30 @@ class ImageProcessingTests(unittest.TestCase):
         cv2.waitKey(0)
 
 class TimeStamp:
-    year = 2000
-    month = 1
-    day = 5
-    hour = 12
-    minutes = 30
-    seconds = 20
+
+    def __init__(self):
+        self.year = 2000
+        self.month = 1
+        self.day = 5
+        self.hour = 12
+        self.minutes = 30
+        self.seconds = 20
     
     def __eq__(self, other):
         return isinstance(other, TimeStamp) and other.year == self.year and other.month == self.month and other.day == self.day \
                and other.hour == self.hour and other.minutes == self.minutes and other.seconds == self.seconds
 
-class ImageStorageTests(unittest.TestCase):
-    footage = 0
+    def __str__(self):
+        return str(self.hour) + "h" + str(self.minutes) + "m" + str(self.seconds) + "s"
 
+    def __repr__(self):
+        return self.__str__()
+
+class ImageStorageTests(unittest.TestCase):
     def create_storage(self):
         self.footage = fs.FootageStorage()
 
     def insert_simple_image(self, timeStamp = TimeStamp()):
-        self.create_storage()
-
         self.footage.insertPicture(simpleItemId, imageProcessing.getImageFromBytesFile(testPictureFilename), timeStamp, ((1, 2), (2, 3)))
 
     def test_insert_image_test(self):
@@ -80,6 +83,26 @@ class ImageStorageTests(unittest.TestCase):
         self.assertEqual(lastFootage[0][1], timeStamp2)
         self.assertEqual(lastFootage[1][1], timeStamp3)
         self.assertEqual(lastFootage[2][1], timeStamp4)
+
+    def test_save_and_load(self):
+        self.create_storage()
+        self.insert_simple_image()
+
+        fs.saveFootageStorage(self.footage)
+
+        otherFootage = fs.loadFootageStorage().getLastSeenFootageAndInformation(simpleItemId)
+        lastFootage = self.footage.getLastSeenFootageAndInformation(simpleItemId)
+
+        self.assertTrue((lastFootage[0][0] == otherFootage[0][0]).all())
+        self.assertEqual(lastFootage[0][1], otherFootage[0][1])
+        self.assertEqual(lastFootage[0][2], otherFootage[0][2])
+
+    def test_print_saved_info(self):
+        lastFootage = fs.loadFootageStorage().getLastSeenFootageAndInformation(simpleItemId)
+
+        print("Image: ", lastFootage[0][0])
+        print("Timestamp: ", lastFootage[0][1])
+        print("BoundingBox: ", lastFootage[0][2])
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,4 +1,5 @@
 import pickle
+import os
 from os.path import exists as file_exists
 
 maxFootageSeconds = 5
@@ -7,21 +8,27 @@ filename = "data/footageStorage.pickle"
 
 def loadFootageStorage():
     if file_exists(filename):
-        return pickle.load(open(filename, 'r+b'))
+        file = open(filename, 'rb')
+        footage = pickle.load(file)
+        file.close()
+
+        return footage
     else:
         return FootageStorage()
 
 
-def saveFootageStorage():
-    pickle.dump(footageStorage, open(filename, 'w+b'))
+def saveFootageStorage(footageStorage):
+    os.makedirs("data", exist_ok=True)
+    file = open(filename, 'wb')
+    pickle.dump(footageStorage, file)
+    file.close()
 
 class FootageStorage:
-    # Maps itemIds to lists. Such lists contain tuples, where the 1st element is a picture and the 2nd is a timestamp
-    # an the 3rd is a bounding box that captures the item of the corresponding itemId
-    map = {}
-
     def __init__(self):
         pass
+        # Maps itemIds to lists. Such lists contain tuples, where the 1st element is a picture and the 2nd is a timestamp
+        # an the 3rd is a bounding box that captures the item of the corresponding itemId
+        self.map = {}
 
     def insertPicture(self, itemId, picture, timestamp, boundingBox):
         if itemId in self.map:
@@ -55,9 +62,6 @@ class FootageStorage:
             return self.map[itemId]
         else:
             return []
-
-
-footageStorage = loadFootageStorage()
 
 def isTimeDifferenceTooLarge(timestamp1, timestamp2):
     if timestamp1.year != timestamp2.year or timestamp1.month != timestamp2.month or \

@@ -26,7 +26,7 @@ class CameraToCentralSystemServiceService(pb2_grpc.CameraToCentralSystemServiceS
         print("Received footage! Size: ", len(img_bytes))
 
         for i in range(len(items)):
-            pass
+            item, boundingBox = items[i], locations[i]
 
         return pb2.FootageAck()
 

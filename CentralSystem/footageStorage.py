@@ -24,21 +24,21 @@ class FootageStorage:
         pass
 
     def insertPicture(self, itemId, picture, timestamp, boundingBox):
-        if itemId in map:
+        if itemId in self.map:
             # Item already has footage associated with it
-            footage = map[itemId]
+            footage = self.map[itemId]
 
             # Removing old footage of the item
             self.removeOutdatedPictures(itemId, timestamp)
         else:
             # Item doesn't have footage associated with it
             footage = []
-            map[itemId] = footage
+            self.map[itemId] = footage
 
         footage.append((picture, timestamp, boundingBox))
 
     def removeOutdatedPictures(self, itemId, currentTimestamp):
-        footage = map[itemId]
+        footage = self.map[itemId]
 
         for i in range(len(footage)):
             timestamp = footage[i][1]
@@ -51,8 +51,8 @@ class FootageStorage:
         """Returns a list of tuples, whose 1st element is a picture, 2nd element is the picture's timestamp,
         and 3rd element is a bounding box that captures the item associated with the corresponding itemID"""
 
-        if itemId in map:
-            return map[itemId]
+        if itemId in self.map:
+            return self.map[itemId]
         else:
             return []
 

@@ -23,17 +23,27 @@ net.setInputMean(127.5)
 net.setInputSwapRB(True)
 
 while True:
-    success, img = cap.read()
-    classIds, confs, boundingBox = net.detect(img, confThreshold=thres)
+ 
+    try:
+        success, img = cap.read()
+        classIds, confs, boundingBox = net.detect(img, confThreshold=thres)
+        print(classIds)
+        matchList = []
 
-    if len(classIds) != 0:
-        for classId, confidence, box in zip(classIds.flatten(), confs.flatten(), boundingBox):
-            cv2.rectangle(img, box, color=(0, 255, 0), thickness=2)
-            cv2.putText(img, classNames[classId-1].upper(), (box[0] + 10, box[1] + 30), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
-            #cv2.putText(img, str(round(confidence*100, 2)), (box[0] + 200, box[1], + 30).upper(), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
+        if classIds == 1:
+            matchList.append(boundingBox)
 
-    cv2.imshow("Output", img)
-    cv2.waitKey(1)
+        if len(classIds) != 0:
+            for classId, confidence, box in zip(classIds.flatten(), confs.flatten(), boundingBox):
+                cv2.rectangle(img, box, color=(0, 255, 0), thickness=2)
+                cv2.putText(img, classNames[classId-1].upper(), (box[0] + 10, box[1] + 30), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
+                #cv2.putText(img, str(round(confidence*100, 2)), (box[0] + 200, box[1], + 30).upper(), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
+        cv2.imshow("Output", img)
+        cv2.waitKey(1)
+
+    except Exception as e:
+        print(str(e))
+    
 
 def greet():
     print("Hello Nicole")

@@ -14,7 +14,7 @@ class CameraToCentralSystemServiceService(pb2_grpc.CameraToCentralSystemServiceS
     def send_footage(self, request, context):
         img_bytes = request.picture
         
-        items, locations = imageProcessing.processImage(img_bytes)
+        identifiedItems, locations = imageProcessing.processImage(img_bytes)
 
         print("Received footage! Size: ", len(img_bytes))
 

@@ -1,6 +1,7 @@
 import pickle
 import os
 from os.path import exists as file_exists
+from typing import Optional
 
 maxFootageSeconds = 5
 filename = "data/footageStorage.pickle"
@@ -23,11 +24,18 @@ def saveFootageStorage(footageStorage):
     pickle.dump(footageStorage, file)
     file.close()
 
+class Footage:
+
+    def __init__(self, picture, timestamp, boundingBox):
+        self.picture = picture
+        self.timestamp = timestamp
+        self.boundingBox = boundingBox
+
 class FootageStorage:
     def __init__(self):
         pass
-        # Maps itemIds to lists. Such lists contain tuples, where the 1st element is a picture and the 2nd is a timestamp
-        # an the 3rd is a bounding box that captures the item of the corresponding itemId
+        # Maps itemIds to lists. Such lists contain footage, which holds a picture, a timestamp
+        # and a bounding box that captures the item of the corresponding itemId
         self.map = {}
 
     def insertPicture(self, itemId, picture, timestamp, boundingBox):
@@ -42,28 +50,28 @@ class FootageStorage:
             footage = []
             self.map[itemId] = footage
 
-        footage.append((picture, timestamp, boundingBox))
+        footage.append(Footage(picture, timestamp, boundingBox))
 
     def removeOutdatedPictures(self, itemId, currentTimestamp):
         footage = self.map[itemId]
 
         for i in range(len(footage)):
-            timestamp = footage[i][1]
+            timestamp = footage[i].timestamp
 
             if (isTimeDifferenceTooLarge(currentTimestamp, timestamp)):
                 # Time difference between this picture's timestamp and the current timestamp is over the threshold
                 del footage[i]
 
-    def getLastSeenFootageAndInformation(self, itemId):
+    def getLastSeenFootageAndInformation(self, itemId) -> Optional[list[Footage]]:
         """Returns a list of tuples, whose 1st element is a picture, 2nd element is the picture's timestamp,
         and 3rd element is a bounding box that captures the item associated with the corresponding itemID"""
 
         if itemId in self.map:
             return self.map[itemId]
         else:
-            return []
+            return None
 
-def isTimeDifferenceTooLarge(timestamp1, timestamp2):
+def isTimeDifferenceTooLarge(timestamp1, timestamp2) -> bool:
     if timestamp1.year != timestamp2.year or timestamp1.month != timestamp2.month or \
             timestamp1.day != timestamp2.day or timestamp1.hour != timestamp2.hour:
         return True

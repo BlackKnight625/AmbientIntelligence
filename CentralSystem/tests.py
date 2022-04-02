@@ -55,9 +55,9 @@ class ImageStorageTests(unittest.TestCase):
         lastFootage = self.footage.getLastSeenFootageAndInformation(simpleItemId)
 
         self.assertEqual(len(lastFootage), 1)
-        self.assertTrue((lastFootage[0][0] == imageProcessing.getImageFromBytesFile(testPictureFilename)).all())
-        self.assertEqual(lastFootage[0][1], TimeStamp())
-        self.assertEqual(lastFootage[0][2], ((1, 2), (2, 3)))
+        self.assertTrue((lastFootage[0].picture == imageProcessing.getImageFromBytesFile(testPictureFilename)).all())
+        self.assertEqual(lastFootage[0].timestamp, TimeStamp())
+        self.assertEqual(lastFootage[0].boundingBox, ((1, 2), (2, 3)))
 
     def test_insert_images_test(self):
         self.create_storage()
@@ -80,9 +80,9 @@ class ImageStorageTests(unittest.TestCase):
         lastFootage = self.footage.getLastSeenFootageAndInformation(simpleItemId)
 
         self.assertEqual(len(lastFootage), 3)
-        self.assertEqual(lastFootage[0][1], timeStamp2)
-        self.assertEqual(lastFootage[1][1], timeStamp3)
-        self.assertEqual(lastFootage[2][1], timeStamp4)
+        self.assertEqual(lastFootage[0].timestamp, timeStamp2)
+        self.assertEqual(lastFootage[1].timestamp, timeStamp3)
+        self.assertEqual(lastFootage[2].timestamp, timeStamp4)
 
     def test_save_and_load(self):
         self.create_storage()
@@ -93,16 +93,16 @@ class ImageStorageTests(unittest.TestCase):
         otherFootage = fs.loadFootageStorage().getLastSeenFootageAndInformation(simpleItemId)
         lastFootage = self.footage.getLastSeenFootageAndInformation(simpleItemId)
 
-        self.assertTrue((lastFootage[0][0] == otherFootage[0][0]).all())
-        self.assertEqual(lastFootage[0][1], otherFootage[0][1])
-        self.assertEqual(lastFootage[0][2], otherFootage[0][2])
+        self.assertTrue((lastFootage[0].picture == otherFootage[0].picture).all())
+        self.assertEqual(lastFootage[0].timestamp, otherFootage[0].timestamp)
+        self.assertEqual(lastFootage[0].boundingBox, otherFootage[0].boundingBox)
 
     def test_print_saved_info(self):
         lastFootage = fs.loadFootageStorage().getLastSeenFootageAndInformation(simpleItemId)
 
-        print("Image: ", lastFootage[0][0])
-        print("Timestamp: ", lastFootage[0][1])
-        print("BoundingBox: ", lastFootage[0][2])
+        print("Image: ", lastFootage[0].picture)
+        print("Timestamp: ", lastFootage[0].timestamp)
+        print("BoundingBox: ", lastFootage[0].boundingBox)
 
 if __name__ == '__main__':
     unittest.main()

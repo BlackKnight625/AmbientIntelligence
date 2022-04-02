@@ -7,6 +7,7 @@ import communication_pb2_grpc as pb2_grpc
 import communication_pb2 as pb2
 import cv2
 import numpy as np
+import os
 
 class CameraToCentralSystemServiceService(pb2_grpc.CameraToCentralSystemServiceServicer):
     def __init__(self, *args, **kwargs):
@@ -23,7 +24,14 @@ class CameraToCentralSystemServiceService(pb2_grpc.CameraToCentralSystemServiceS
         cv2.imshow("Message", canva)
         cv2.waitKey(1)
 
-        #print("Received footage! Size: ", len(img_bytes))
+        print("Received footage! Size: ", len(img_bytes), ", Timestamp: ", timeStamp.minutes, "m ", timeStamp.seconds, "s")
+
+        imageFileName = 'images/' + str(timeStamp.hour) + "," + str(timeStamp.minutes) + "," + str(timeStamp.seconds) + '.imageBytes'
+
+        os.makedirs(os.path.dirname(imageFileName), exist_ok=True) #Creating directories for the file
+
+        with open(imageFileName, 'wb') as file:
+            file.write(img_bytes)
 
         return pb2.FootageAck()
 

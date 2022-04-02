@@ -2,7 +2,7 @@ import pickle
 from os.path import exists as file_exists
 
 maxFootageSeconds = 5
-filename = "footageStorage.pickle"
+filename = "data/footageStorage.pickle"
 
 
 def loadFootageStorage():
@@ -14,10 +14,6 @@ def loadFootageStorage():
 
 def saveFootageStorage():
     pickle.dump(footageStorage, open(filename, 'w+b'))
-
-
-footageStorage = loadFootageStorage()
-
 
 class FootageStorage:
     # Maps itemIds to lists. Such lists contain tuples, where the 1st element is a picture and the 2nd is a timestamp
@@ -60,6 +56,8 @@ class FootageStorage:
         else:
             return []
 
+
+footageStorage = loadFootageStorage()
 
 def isTimeDifferenceTooLarge(timestamp1, timestamp2):
     if timestamp1.year != timestamp2.year or timestamp1.month != timestamp2.month or \

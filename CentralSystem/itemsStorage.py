@@ -25,3 +25,6 @@ class ItemsStorage:
 
     def setLocked(self, itemId, isLocked):
         pass
+
+    def getAllItemsAsList(self):
+        pass

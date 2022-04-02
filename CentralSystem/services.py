@@ -27,31 +27,31 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
     def __init__(self, *args, **kwargs):
         pass
 
-    def locateItem(self, itemID, context):
+    def locateItem(self, itemID, context): # Returns 
         id = itemID.id
         pass
 
-    def photoTaken(self, request, context):
+    def photoTaken(self, footage, context): # Returns
         pass
 
-    def confirmItemInsertion(self, request, context):
+    def confirmItemInsertion(self, itemID, context): # Returns
         pass
 
-    def searchItem(self, request, context):
+    def searchItem(self, searchParameters, context): # Returns
         pass
 
-    def trackItem(self, request, context):
+    def trackItem(self, itemID, context): # Returns
         pass
 
-    def untrackItem(self, request, context):
+    def untrackItem(self, itemID, context): # Returns
         pass
 
-    def lockItem(self, request, context):
+    def lockItem(self, itemID, context): # Returns
         pass
 
-    def unlockItem(self, request, context):
+    def unlockItem(self, itemID, context): # Returns
         pass
 
-    def removeItem(self, request, context):
+    def removeItem(self, itemID, context): # Returns
         pass
 

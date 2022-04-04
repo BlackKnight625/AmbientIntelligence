@@ -1,4 +1,4 @@
-package com.example.smartphoneapp.grpc.observers;
+package com.moms.app.grpc.observers;
 
 import java.util.List;
 

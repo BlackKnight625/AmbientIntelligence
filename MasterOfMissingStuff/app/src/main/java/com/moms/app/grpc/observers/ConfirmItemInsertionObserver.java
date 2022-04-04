@@ -1,9 +1,9 @@
-package com.example.smartphoneapp.grpc.observers;
+package com.moms.app.grpc.observers;
 
 import io.grpc.stub.StreamObserver;
 import pt.tecnico.moms.grpc.Communication;
 
-public class RemoveItemObserver implements StreamObserver<Communication.Ack> {
+public class ConfirmItemInsertionObserver implements StreamObserver<Communication.Ack> {
 
     @Override
     public void onNext(Communication.Ack value) {
@@ -12,7 +12,7 @@ public class RemoveItemObserver implements StreamObserver<Communication.Ack> {
 
     @Override
     public void onError(Throwable t) {
-        System.out.println("Error while receiving an Ack from a 'removeItem' call: ");
+        System.out.println("Error while receiving an Ack from a 'confirmItemInsertion' call: ");
         t.printStackTrace();
     }
 

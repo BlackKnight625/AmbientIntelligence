@@ -1,4 +1,4 @@
-package com.example.smartphoneapp.grpc.observers;
+package com.moms.app.grpc.observers;
 
 import io.grpc.stub.StreamObserver;
 import pt.tecnico.moms.grpc.Communication;

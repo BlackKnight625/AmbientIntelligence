@@ -1,14 +1,14 @@
-package com.example.smartphoneapp.grpc;
+package com.moms.app.grpc;
 
-import com.example.smartphoneapp.grpc.observers.ConfirmItemInsertionObserver;
-import com.example.smartphoneapp.grpc.observers.LocateItemObserver;
-import com.example.smartphoneapp.grpc.observers.LockItemObserver;
-import com.example.smartphoneapp.grpc.observers.PhotoTakenObserver;
-import com.example.smartphoneapp.grpc.observers.RemoveItemObserver;
-import com.example.smartphoneapp.grpc.observers.SearchItemObserver;
-import com.example.smartphoneapp.grpc.observers.TrackItemObserver;
-import com.example.smartphoneapp.grpc.observers.UnlockItemObserver;
-import com.example.smartphoneapp.grpc.observers.UntrackItemObserver;
+import com.moms.app.grpc.observers.ConfirmItemInsertionObserver;
+import com.moms.app.grpc.observers.LocateItemObserver;
+import com.moms.app.grpc.observers.LockItemObserver;
+import com.moms.app.grpc.observers.PhotoTakenObserver;
+import com.moms.app.grpc.observers.RemoveItemObserver;
+import com.moms.app.grpc.observers.SearchItemObserver;
+import com.moms.app.grpc.observers.TrackItemObserver;
+import com.moms.app.grpc.observers.UnlockItemObserver;
+import com.moms.app.grpc.observers.UntrackItemObserver;
 import com.google.protobuf.ByteString;
 
 import java.util.Calendar;

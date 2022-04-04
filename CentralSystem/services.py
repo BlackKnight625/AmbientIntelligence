@@ -36,7 +36,7 @@ def getItemName(classId):
 """This class handles messages that were sent from the Surveillance Cameras (Camera App)"""
 
 
-class CameraToCentralSystemServiceService(pb2_grpc.CameraToCentralSystemServiceServicer):
+class CameraToCentralSystemService(pb2_grpc.CameraToCentralSystemServiceServicer):
     footageReceived = 0
 
     def __init__(self, *args, **kwargs):

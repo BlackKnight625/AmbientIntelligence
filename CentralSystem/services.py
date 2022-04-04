@@ -2,19 +2,19 @@ import sys
 
 import cv2
 
-from itemsStorage import ItemsStorage
-
 sys.path.insert(1, '../GrpcContract/target')
 
 import communication_pb2_grpc as pb2_grpc
 import communication_pb2 as pb2
 import imageProcessing
 import footageStorage as fs
+import itemsStorage as iS
 
 
 # Global Variables
 
 footageStorage = fs.loadFootageStorage()
+items_storage = iS.loadItemsStorage()
 
 # Service implementations
 classNames = []
@@ -55,15 +55,16 @@ class CameraToCentralSystemServiceService(pb2_grpc.CameraToCentralSystemServiceS
         self.footageReceived += 1
 
         if(self.footageReceived % 10):
-            # Time to save all footage
+            # Time to save all footage and items
             fs.saveFootageStorage(footageStorage)
+            iS.saveItemsStorage(items_storage)
 
         return pb2.FootageAck()
 
 """This class handles messages that were sent from the SmartPhone App"""
 class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemServiceServicer):
     def __init__(self, *args, **kwargs):
-        self.iems_storage = ItemsStorage()
+        pass
 
     def locateItem(self, itemId, context): # Returns VideoFootage
         id = itemId.id
@@ -113,7 +114,7 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
         elif len(items) > 1:
             photoResponse.newItemId = ""
             photoResponse.status = pb2.PhotoResponse.MULTIPLE_ITEMS_FOUND
-        elif self.items_storage.has_item(getItemName(items[0])):
+        elif items_storage.has_item(getItemName(items[0])):
             photoResponse.newItemId = ""
             photoResponse.status = pb2.PhotoResponse.ITEM_ALREADY_EXISTS
         else:
@@ -122,30 +123,30 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
         return photoResponse
 
     def confirmItemInsertion(self, itemID, context): # Returns Ack
-        self.items_storage.insertItem(itemID.id, True, False)
+        items_storage.insertItem(itemID.id, True, False)
         return pb2.Ack()
 
     def searchItem(self, searchParameters, context): # Returns SearchResponse
         searchResponse = pb2.SearchResponse()
-        searchResponse.searchResults[:] = self.items_storage.get_search_results(searchParameters)
+        searchResponse.searchResults[:] = items_storage.get_search_results(searchParameters)
         return searchResponse
 
     def trackItem(self, itemID, context): # Returns Ack
-        self.items_storage.setTracked(itemID.id, True)
+        items_storage.setTracked(itemID.id, True)
         return pb2.Ack()
 
     def untrackItem(self, itemID, context): # Returns Ack
-        self.items_storage.setTracked(itemID.id, False)
+        items_storage.setTracked(itemID.id, False)
         return pb2.Ack()
 
     def lockItem(self, itemID, context): # Returns Ack
-        self.items_storage.setLocked(itemID.id, True)
+        items_storage.setLocked(itemID.id, True)
         return pb2.Ack()
 
     def unlockItem(self, itemID, context): # Returns Ack
-        self.items_storage.setLocked(itemID.id, False)
+        items_storage.setLocked(itemID.id, False)
         return pb2.Ack()
 
     def removeItem(self, itemID, context): # Returns Ack
-        self.items_storage.removeItem(itemID.id)
+        items_storage.removeItem(itemID.id)
         return pb2.Ack()

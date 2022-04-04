@@ -25,6 +25,12 @@ def processImage(image):
 def getImageFromBytes(bytes):
     return cv2.imdecode(np.frombuffer(bytes, np.uint8), -1)
 
+def getBytesFromImage(image):
+    success, bytes = cv2.imencode(".jpg", image)
+
+    if success:
+        return bytes.tobytes()
+
 def getImageFromBytesFile(imageFilename):
     imageFileObj = open(imageFilename, "rb")
     imageBinaryBytes = imageFileObj.read()

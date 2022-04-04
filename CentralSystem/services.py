@@ -1,5 +1,7 @@
 import sys
-from GrpcContract.target.communication_pb2 import PhotoResponse
+
+import cv2
+
 from itemsStorage import ItemsStorage
 
 sys.path.insert(1, '../GrpcContract/target')
@@ -67,12 +69,38 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
         id = itemId.id
         videoFootageResponse = pb2.VideoFootage()
 
-        lastSeenFootage = footageStorage.getLastSeenFootageAndInformation(itemId)
+        lastSeenFootage = footageStorage.getLastSeenFootageAndInformation(id)
+
+        pictures = []
+        boundingBoxes = []
 
         for footage in lastSeenFootage:
-            pass
+            bb = footage.boundingBox
 
-        pass
+            picture = pb2.Footage()
+
+            boundingBox = pb2.BoundingBox()
+            pointHigh = pb2.Point()
+            pointLow = pb2.Point()
+
+            pointHigh.x = bb[0] + bb[2] # x_min + width
+            pointHigh.y = bb[1] + bb[3] # y_min + height
+            pointLow.x = bb[1] # x_min
+            pointLow.y = bb[1] # y_min
+
+            boundingBox.high = pointHigh
+            boundingBox.low = pointLow
+
+            picture.timestamp = footage.timestamp
+            picture.picture = imageProcessing.getBytesFromImage(footage.picture)
+
+            pictures.append(picture)
+            boundingBoxes.append(boundingBox)
+
+        videoFootageResponse.pictures[:] = pictures
+        videoFootageResponse.itemBoundingBoxes[:] = boundingBoxes
+
+        return videoFootageResponse
 
     def photoTaken(self, footage, context): # Returns PhotoResponse
         img_bytes = footage.picture
@@ -99,7 +127,7 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
 
     def searchItem(self, searchParameters, context): # Returns SearchResponse
         searchResponse = pb2.SearchResponse()
-        searchResponse.searchResults = self.items_storage.get_search_results(searchParameters)
+        searchResponse.searchResults[:] = self.items_storage.get_search_results(searchParameters)
         return searchResponse
 
     def trackItem(self, itemID, context): # Returns Ack
@@ -121,4 +149,3 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
     def removeItem(self, itemID, context): # Returns Ack
         self.items_storage.removeItem(itemID.id)
         return pb2.Ack()
-

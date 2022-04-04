@@ -9,6 +9,7 @@ import communication_pb2 as pb2
 import imageProcessing
 import footageStorage as fs
 import itemsStorage as iS
+import time
 
 from RWLock import RWLock
 
@@ -21,6 +22,10 @@ items_storage = iS.loadItemsStorage()
 
 lockedItemsMovedLock = RWLock()
 lockedItemsMoved = []
+
+lastFootageReceivedTimeLock = RWLock()
+lastFootageReceivedTime = time.time()
+lastFootageReceivedTimeout = 10
 
 # Service implementations
 classNames = []
@@ -92,6 +97,11 @@ class CameraToCentralSystemService(pb2_grpc.CameraToCentralSystemServiceServicer
             itemsLock.r_acquire()
             iS.saveItemsStorage(items_storage)
             itemsLock.r_release()
+
+        lastFootageReceivedTimeLock.w_acquire()
+        global lastFootageReceivedTime # Needed to change this global variable on the next line
+        lastFootageReceivedTime = time.time()
+        lastFootageReceivedTimeLock.w_release()
 
         return pb2.FootageAck()
 
@@ -203,7 +213,15 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
         return pb2.Ack()
 
     def statusRequest(self, request, context):
-        pass
+        lockedItemsMovedLock.r_acquire()
+
+        if len(lockedItemsMoved) != 0:
+            # Items have been moved
+            lockedItemsMovedLock.r_release()
+
+
+        else:
+            lockedItemsMovedLock.r_release()
 
 
 def getGrpcBoundingBoxFromCv2(cvsBoundingBox):

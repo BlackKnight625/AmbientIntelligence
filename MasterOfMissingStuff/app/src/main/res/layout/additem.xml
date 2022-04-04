@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,26 +9,35 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginBottom="167dp"
         android:fontFamily="sans-serif-light"
-        android:text="Add new item"
+        android:text="@string/add_new_item"
         android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="24sp"
-        tools:layout_editor_absoluteX="133dp"
-        tools:layout_editor_absoluteY="232dp" />
+        app:layout_constraintBottom_toTopOf="@+id/button7"
+        app:layout_constraintStart_toStartOf="@+id/imageView7"
+        app:layout_constraintTop_toBottomOf="@+id/imageView6" />
 
     <ImageView
         android:id="@+id/imageView7"
         android:layout_width="195dp"
-        android:layout_height="182dp"
-        app:srcCompat="@drawable/placeholder"
-        tools:layout_editor_absoluteX="108dp"
-        tools:layout_editor_absoluteY="293dp" />
+        android:layout_height="0dp"
+        android:layout_marginTop="29dp"
+        android:layout_marginBottom="36dp"
+        android:contentDescription="@string/new_item"
+        app:layout_constraintBottom_toTopOf="@+id/button9"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4"
+        app:srcCompat="@drawable/placeholder" />
 
     <Button
         android:id="@+id/button7"
         android:layout_width="242dp"
-        android:layout_height="54dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="26dp"
         android:background="#8A6262"
         android:fontFamily="sans-serif-light"
         android:text="Add picture"
@@ -42,13 +50,17 @@
         app:iconPadding="0dp"
         app:iconTint="#FFFFFF"
         app:iconTintMode="multiply"
-        tools:layout_editor_absoluteX="84dp"
-        tools:layout_editor_absoluteY="431dp" />
+        app:layout_constraintBottom_toTopOf="@+id/button9"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4"
+        tools:ignore="TextContrastCheck" />
 
     <Button
         android:id="@+id/button9"
         android:layout_width="242dp"
-        android:layout_height="54dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="166dp"
         android:background="#8A6262"
         android:fontFamily="sans-serif-light"
         android:text="Add name"
@@ -61,15 +73,22 @@
         app:iconPadding="0dp"
         app:iconTint="#FFFFFF"
         app:iconTintMode="multiply"
-        tools:layout_editor_absoluteX="84dp"
-        tools:layout_editor_absoluteY="511dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button7"
+        tools:ignore="TextContrastCheck" />
 
     <ImageView
         android:id="@+id/imageView6"
         android:layout_width="230dp"
-        android:layout_height="142dp"
-        app:srcCompat="@drawable/momslogo"
-        tools:layout_editor_absoluteX="90dp"
-        tools:layout_editor_absoluteY="51dp" />
+        android:layout_height="0dp"
+        android:layout_marginTop="51dp"
+        android:layout_marginBottom="39dp"
+        app:layout_constraintBottom_toTopOf="@+id/textView4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/momslogo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

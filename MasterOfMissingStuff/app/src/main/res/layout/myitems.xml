@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,15 +8,22 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="219dp"
-        android:layout_height="129dp"
-        app:srcCompat="@drawable/momslogo"
-        tools:layout_editor_absoluteX="96dp"
-        tools:layout_editor_absoluteY="71dp" />
+        android:layout_height="0dp"
+        android:layout_marginTop="71dp"
+        android:layout_marginBottom="202dp"
+        android:contentDescription="@string/moms_logo"
+        app:layout_constraintBottom_toTopOf="@+id/textView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/momslogo" />
 
     <Button
         android:id="@+id/button3"
         android:layout_width="242dp"
-        android:layout_height="54dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="186dp"
+        android:layout_marginBottom="67dp"
         android:background="#8A6262"
         android:fontFamily="sans-serif-light"
         android:text="Search for item..."
@@ -30,55 +36,80 @@
         app:iconPadding="0dp"
         app:iconTint="#FFFFFF"
         app:iconTintMode="multiply"
-        tools:layout_editor_absoluteX="84dp"
-        tools:layout_editor_absoluteY="186dp" />
+        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="28dp"
         android:fontFamily="sans-serif-light"
         android:text="My Items"
         android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="24sp"
-        tools:layout_editor_absoluteX="156dp"
-        tools:layout_editor_absoluteY="307dp" />
+        app:layout_constraintBottom_toTopOf="@+id/imageView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button3" />
 
     <ImageView
         android:id="@+id/imageView4"
-        android:layout_width="103dp"
-        android:layout_height="102dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="62dp"
+        android:layout_marginEnd="33dp"
+        android:layout_marginBottom="142dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/textView3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView2"
         app:srcCompat="@drawable/placeholder"
-        tools:layout_editor_absoluteX="62dp"
-        tools:layout_editor_absoluteY="487dp" />
+        tools:ignore="ImageContrastCheck" />
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="103dp"
-        android:layout_height="102dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="62dp"
+        android:layout_marginEnd="33dp"
+        android:layout_marginBottom="18dp"
+        app:layout_constraintBottom_toTopOf="@+id/imageView4"
+        app:layout_constraintEnd_toStartOf="@+id/textView2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
         app:srcCompat="@drawable/placeholder"
-        tools:layout_editor_absoluteX="62dp"
-        tools:layout_editor_absoluteY="367dp" />
+        tools:ignore="ImageContrastCheck" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="146dp"
+        android:layout_marginBottom="78dp"
         android:fontFamily="sans-serif-light"
         android:text="Item 1"
         android:textSize="24sp"
-        tools:layout_editor_absoluteX="198dp"
-        tools:layout_editor_absoluteY="402dp" />
+        app:layout_constraintBottom_toTopOf="@+id/textView3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="146dp"
+        android:layout_marginBottom="187dp"
         android:fontFamily="sans-serif-light"
         android:text="Item 2"
         android:textSize="24sp"
-        tools:layout_editor_absoluteX="198dp"
-        tools:layout_editor_absoluteY="512dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView4"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

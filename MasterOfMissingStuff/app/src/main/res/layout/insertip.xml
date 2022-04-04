@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,15 +8,21 @@
     <ImageView
         android:id="@+id/imageView9"
         android:layout_width="230dp"
-        android:layout_height="142dp"
-        app:srcCompat="@drawable/momslogo"
-        tools:layout_editor_absoluteX="90dp"
-        tools:layout_editor_absoluteY="149dp" />
+        android:layout_height="0dp"
+        android:layout_marginTop="149dp"
+        android:layout_marginBottom="87dp"
+        android:contentDescription="@string/moms_logo"
+        app:layout_constraintBottom_toTopOf="@+id/button5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/momslogo" />
 
     <Button
         android:id="@+id/button8"
         android:layout_width="188dp"
-        android:layout_height="47dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="248dp"
         android:background="#8A6262"
         android:fontFamily="sans-serif-light"
         android:text="Insert Port"
@@ -29,13 +34,17 @@
         app:iconPadding="0dp"
         app:iconTint="#FFFFFF"
         app:iconTintMode="multiply"
-        tools:layout_editor_absoluteX="111dp"
-        tools:layout_editor_absoluteY="436dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button5"
+        tools:ignore="TextContrastCheck" />
 
     <Button
         android:id="@+id/button5"
         android:layout_width="188dp"
-        android:layout_height="47dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="11dp"
         android:background="#8A6262"
         android:fontFamily="sans-serif-light"
         android:text="Insert IP"
@@ -47,6 +56,9 @@
         app:iconPadding="0dp"
         app:iconTint="#FFFFFF"
         app:iconTintMode="multiply"
-        tools:layout_editor_absoluteX="111dp"
-        tools:layout_editor_absoluteY="378dp" />
+        app:layout_constraintBottom_toTopOf="@+id/button8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView9"
+        tools:ignore="TextContrastCheck" />
 </androidx.constraintlayout.widget.ConstraintLayout>

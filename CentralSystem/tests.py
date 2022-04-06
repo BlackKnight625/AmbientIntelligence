@@ -7,11 +7,13 @@ import cv2
 import services
 import time
 import communication_pb2 as pb2
+import numpy as np
 
 testPictureFilename = "../PictureReceivingTest/images/2,56,45.imageBytes"
 testPictureFilename2 = "../PictureReceivingTest/images/2,56,46.imageBytes"
 testPictureFilename3 = "../PictureReceivingTest/images/2,56,48.imageBytes"
-testPictureFilename4 = "../PictureReceivingTest/images/person.jpg"
+singlePersonFilename = "../PictureReceivingTest/images/person.jpg"
+nothingFilename = "../PictureReceivingTest/images/nothing.jpg"
 simpleItemId = "abc"
 
 
@@ -63,6 +65,7 @@ class TimeStamp:
         timestamp.seconds = self.seconds
 
         return timestamp
+
 
 class ImageStorageTests(unittest.TestCase):
     def setUp(self) -> None:
@@ -143,8 +146,8 @@ class ServiceTests(unittest.TestCase):
     def addLockedItemMoved(self, itemId):
         services.lockedItemsMoved.append(itemId)
 
-    def insertItem(self, itemId, locked, tracked):
-        services.items_storage.inserItem(itemId, locked, tracked)
+    def insertItem(self, itemId, locked, tracked, image=np.zeros(16), name="name"):
+        services.items_storage.insertItem(itemId, locked, tracked, image, name)
 
     def insertPicture(self, imageFilename, timestamp=TimeStamp()):
         footage = pb2.Footage()
@@ -230,7 +233,7 @@ class ServiceTests(unittest.TestCase):
 
         self.insertItem(itemId.id, False, True)
         self.insertPicture(testPictureFilename2)
-        
+
         self.smartphoneService.removeItem(itemId, None)
 
         self.assertTrue(not services.items_storage.has_item(itemId.id))
@@ -247,7 +250,7 @@ class ServiceTests(unittest.TestCase):
         timestamps = [timestamp1, timestamp2]
 
         self.insertItem(itemId.id, False, True)
-        self.insertPicture(testPictureFilename4, timestamp1)
+        self.insertPicture(singlePersonFilename, timestamp1)
         self.insertPicture(testPictureFilename3, timestamp2)
 
         insertedFootage = services.footageStorage.getLastSeenFootageAndInformation(itemId.id)
@@ -267,7 +270,8 @@ class ServiceTests(unittest.TestCase):
             self.assertEqual(videoFootage.pictures[i].time.seconds, timestamps[i].seconds)
 
             # Checking if the bounding boxes are the same
-            self.assertTrue((services.getCv2BoundingBoxFromGrpc(videoFootage.itemBoundingBoxes[i]) == insertedFootage[i].boundingBox).all())
+            self.assertTrue((services.getCv2BoundingBoxFromGrpc(videoFootage.itemBoundingBoxes[i]) == insertedFootage[
+                i].boundingBox).all())
 
         # The following code lets us visualize the first image with the bounding box around the identified person
 
@@ -288,25 +292,27 @@ class ServiceTests(unittest.TestCase):
         itemId.id = "person"
         searchParameters = pb2.SearchParameters()
         searchParameters.itemName = itemId.id
-        
-        self.insertItem(itemId.id, False, True)
-        self.insertItem("zebra", False, True)
-        self.insertItem("playstation", True, True)
-        
+
+        self.insertItem(itemId.id, False, True, image = np.ones(16), name = itemId.id)
+        self.insertItem("zebra", False, True, name = "zebra")
+        self.insertItem("playstation", True, True, name = "playstation")
+
         searchResponse = self.smartphoneService.searchItem(searchParameters, None)
 
         self.assertEqual(len(searchResponse.searchResults), 1)
         self.assertEqual(searchResponse.searchResults[0].itemId.id, itemId.id)
         self.assertEqual(searchResponse.searchResults[0].tracked, True)
         self.assertEqual(searchResponse.searchResults[0].locked, False)
+        self.assertTrue((imageProcessing.getImageFromBytes(searchResponse.searchResults[0].image) == np.ones(16)).all())
+        self.assertEqual(searchResponse.searchResults[0].name, itemId.id)
 
     def test_searchAllItems(self):
         searchParameters = pb2.SearchParameters()
         searchParameters.itemName = ""
 
-        self.insertItem("person", False, True)
-        self.insertItem("zebra", False, True)
-        self.insertItem("playstation", True, True)
+        self.insertItem("person", False, True, name="person")
+        self.insertItem("zebra", False, True, name="zebra")
+        self.insertItem("playstation", True, True, name="playstation")
 
         searchResponse = self.smartphoneService.searchItem(searchParameters, None)
 
@@ -316,9 +322,9 @@ class ServiceTests(unittest.TestCase):
         searchParameters = pb2.SearchParameters()
         searchParameters.itemName = "z"
 
-        self.insertItem("person", False, True)
-        self.insertItem("zebra", False, True)
-        self.insertItem("zorro", True, True)
+        self.insertItem("person", False, True, name="person")
+        self.insertItem("zebra", False, True, name="zebra")
+        self.insertItem("playstation", True, True, name="zorro")
 
         searchResponse = self.smartphoneService.searchItem(searchParameters, None)
 
@@ -347,8 +353,8 @@ class ServiceTests(unittest.TestCase):
 
         timestamp2.seconds += 1
 
-        self.insertItem(itemId.id, True, True) # Inserting locked item
-        self.insertPicture(testPictureFilename4, timestamp1)
+        self.insertItem(itemId.id, True, True)  # Inserting locked item
+        self.insertPicture(singlePersonFilename, timestamp1)
         self.insertPicture(testPictureFilename3, timestamp2)
 
         self.assertEqual(len(services.lockedItemsMoved), 1)
@@ -359,6 +365,85 @@ class ServiceTests(unittest.TestCase):
         self.assertTrue(statusResponse.HasField("movedLockedItems"))
         self.assertEqual(len(statusResponse.movedLockedItems.items), 1)
         self.assertEqual(statusResponse.movedLockedItems.items[0].id, itemId.id)
+
+    def test_photoTakenAndConfirmInsertion(self):
+        footage = pb2.Footage()
+        timestamp = TimeStamp()
+
+        footage.picture = imageProcessing.getImageBytesFromBytesFile(singlePersonFilename)
+        footage.time.CopyFrom(timestamp.toGrpc())
+
+        photoResponse = self.smartphoneService.photoTaken(footage, None)
+
+        self.assertEqual(photoResponse.status, pb2.PhotoResponse.OK)
+        self.assertEqual(photoResponse.newItemId.id, "person")
+
+        # Photo sent, photoResponse received. Preparing for confirmItemInsertion
+
+        itemInformation = pb2.ItemInformation()
+
+        itemInformation.itemId.CopyFrom(photoResponse.newItemId)
+        itemInformation.tracked = True
+        itemInformation.locked = False
+        itemInformation.image = imageProcessing.getBytesFromImage(np.zeros(1))  # Doesn't matter. Central system already has the item's image
+        itemInformation.name = "jeff"
+
+        self.smartphoneService.confirmItemInsertion(itemInformation, None)
+
+        self.assertEqual(len(services.items_storage.getAllItemsAsList()), 1)
+        self.assertTrue(services.items_storage.has_item(itemInformation.itemId.id))
+
+        newInformation = services.items_storage.getAllItemsAsList()[0]
+
+        self.assertEqual(newInformation[1], itemInformation.tracked)
+        self.assertEqual(newInformation[2], itemInformation.locked)
+        self.assertEqual(newInformation[4], itemInformation.name)
+
+        # The following code lets us visualize the image associated with the inserted item
+
+        """
+        img = newInformation[3]
+
+        cv2.namedWindow("output", cv2.WINDOW_NORMAL)  # Create window with freedom of dimensions
+
+        cv2.imshow("Message", img)
+        cv2.waitKey(0)
+        """
+        
+    def test_photoTakenNoItemFound(self):
+        footage = pb2.Footage()
+        timestamp = TimeStamp()
+
+        footage.picture = imageProcessing.getImageBytesFromBytesFile(nothingFilename)
+        footage.time.CopyFrom(timestamp.toGrpc())
+
+        photoResponse = self.smartphoneService.photoTaken(footage, None)
+
+        self.assertEqual(photoResponse.status, pb2.PhotoResponse.NO_ITEM_FOUND)
+
+    def test_photoTakenMultipleItemsFound(self):
+        footage = pb2.Footage()
+        timestamp = TimeStamp()
+
+        footage.picture = imageProcessing.getImageBytesFromBytesFile(testPictureFilename2)
+        footage.time.CopyFrom(timestamp.toGrpc())
+
+        photoResponse = self.smartphoneService.photoTaken(footage, None)
+
+        self.assertEqual(photoResponse.status, pb2.PhotoResponse.MULTIPLE_ITEMS_FOUND)
+
+    def test_photoTakenItemAlreadyExists(self):
+        footage = pb2.Footage()
+        timestamp = TimeStamp()
+
+        self.insertItem("person", False, True)
+
+        footage.picture = imageProcessing.getImageBytesFromBytesFile(singlePersonFilename)
+        footage.time.CopyFrom(timestamp.toGrpc())
+
+        photoResponse = self.smartphoneService.photoTaken(footage, None)
+
+        self.assertEqual(photoResponse.status, pb2.PhotoResponse.ITEM_ALREADY_EXISTS)
 
 if __name__ == '__main__':
     unittest.main()

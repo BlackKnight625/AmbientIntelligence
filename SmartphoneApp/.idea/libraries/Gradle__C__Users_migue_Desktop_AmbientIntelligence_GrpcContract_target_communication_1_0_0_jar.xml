@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Gradle: C./Users/migue/Desktop/AmbientIntelligence/GrpcContract/target/communication-1.0.0.jar">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../GrpcContract/target/communication-1.0.0.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

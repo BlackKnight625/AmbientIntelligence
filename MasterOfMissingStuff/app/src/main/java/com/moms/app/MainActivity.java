@@ -5,12 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+
+import com.moms.app.grpc.CentralSystemFrontend;
 
 public class MainActivity extends AppCompatActivity {
+    public static CentralSystemFrontend CSFrontend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,18 +31,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Code here executes on main thread after user presses button
-                System.out.println("Pressed ip button");
+                final EditText ip_text =  (EditText) findViewById(R.id.editTextTextPersonName2);
+                final EditText port_text = (EditText) findViewById(R.id.editTextTextPersonName3);
+                //CSFrontend = new CentralSystemFrontend(ip_text.getText().toString(), Integer.parseInt(port_text.getText().toString()));
+                startActivity(new Intent(MainActivity.this, AddItemActivity.class));
             }
         });
-
-        /*
-        // Create the text message with a string
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.setType("text/plain");
-        sendIntent.putExtra(Intent.EXTRA_TEXT, textMessage);
-        // Start the activity
-        startActivity(sendIntent);
-         */
     }
 }

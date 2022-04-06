@@ -1,29 +1,27 @@
 package com.moms.app.grpc.observers;
 
+import com.moms.app.AddItemActivity;
+
 import io.grpc.stub.StreamObserver;
 import pt.tecnico.moms.grpc.Communication;
 
 public class PhotoTakenObserver implements StreamObserver<Communication.PhotoResponse> {
-    @Override
-    public void onNext(Communication.PhotoResponse value) {
-        onNext(value.getNewItemId().getId(), value.getStatus());
+
+    // Private attributes
+
+    private final AddItemActivity activity;
+
+    // Constructors
+
+    public PhotoTakenObserver(AddItemActivity activity) {
+        this.activity = activity;
     }
 
-    public void onNext(String newItemId, Communication.PhotoResponse.ResponseStatus status) {
-        //TODO
+    // Other methods
 
-        switch (status) {
-            case OK:
-                break;
-            case UNRECOGNIZED:
-                break;
-            case NO_ITEM_FOUND:
-                break;
-            case ITEM_ALREADY_EXISTS:
-                break;
-            case MULTIPLE_ITEMS_FOUND:
-                break;
-        }
+    @Override
+    public void onNext(Communication.PhotoResponse value) {
+        activity.photoTakenResponseReceived(value.getNewItemId().getId(), value.getStatus());
     }
 
     @Override

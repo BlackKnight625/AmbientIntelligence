@@ -15,7 +15,6 @@ import android.widget.EditText;
 import com.moms.app.grpc.CentralSystemFrontend;
 
 public class MainActivity extends AppCompatActivity {
-    public static CentralSystemFrontend CSFrontend;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override

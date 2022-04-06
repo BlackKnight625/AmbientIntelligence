@@ -16,8 +16,8 @@
             android:layout_width="230dp"
             android:layout_height="142dp"
             app:srcCompat="@drawable/momslogo"
-            tools:layout_editor_absoluteX="90dp"
-            tools:layout_editor_absoluteY="207dp" />
+            tools:layout_editor_absoluteX="96dp"
+            tools:layout_editor_absoluteY="188dp" />
 
         <Button
             android:id="@+id/button4"
@@ -29,14 +29,14 @@
             android:textAlignment="center"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
-            app:backgroundTint="#878686"
+            app:backgroundTint="#A5A4A4"
             app:cornerRadius="30dp"
             app:icon="@drawable/plus"
             app:iconPadding="0dp"
             app:iconTint="#FFFFFF"
             app:iconTintMode="multiply"
             tools:layout_editor_absoluteX="84dp"
-            tools:layout_editor_absoluteY="369dp" />
+            tools:layout_editor_absoluteY="393dp" />
 
         <Button
             android:id="@+id/button6"
@@ -48,14 +48,14 @@
             android:textAlignment="center"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
-            app:backgroundTint="#878686"
+            app:backgroundTint="#A5A4A4"
             app:cornerRadius="30dp"
             app:icon="@drawable/magnifier"
             app:iconPadding="0dp"
             app:iconTint="#FFFFFF"
             app:iconTintMode="multiply"
             tools:layout_editor_absoluteX="84dp"
-            tools:layout_editor_absoluteY="439dp" />
+            tools:layout_editor_absoluteY="463dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

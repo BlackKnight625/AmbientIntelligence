@@ -6,6 +6,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <Button
+        android:id="@+id/button8"
+        android:layout_width="62dp"
+        android:layout_height="60dp"
+        android:background="#8A6262"
+        android:fontFamily="sans-serif-light"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        app:backgroundTint="#A1A1A1"
+        app:cornerRadius="30dp"
+        app:icon="@drawable/rightarrow"
+        app:iconPadding="2"
+        app:iconTint="#FFFFFF"
+        app:iconTintMode="multiply"
+        app:rippleColor="#FFFFFF"
+        tools:layout_editor_absoluteX="174dp"
+        tools:layout_editor_absoluteY="521dp" />
+
     <ImageView
         android:id="@+id/imageView9"
         android:layout_width="230dp"
@@ -14,39 +33,28 @@
         tools:layout_editor_absoluteX="90dp"
         tools:layout_editor_absoluteY="149dp" />
 
-    <Button
-        android:id="@+id/button8"
-        android:layout_width="188dp"
-        android:layout_height="47dp"
-        android:background="#8A6262"
+    <EditText
+        android:id="@+id/editTextNumberPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
         android:fontFamily="sans-serif-light"
-        android:text="Insert Port"
+        android:hint="Insert IP"
+        android:inputType="numberPassword"
         android:textAlignment="center"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        app:backgroundTint="#878686"
-        app:cornerRadius="30dp"
-        app:iconPadding="0dp"
-        app:iconTint="#FFFFFF"
-        app:iconTintMode="multiply"
-        tools:layout_editor_absoluteX="111dp"
-        tools:layout_editor_absoluteY="436dp" />
+        tools:layout_editor_absoluteX="100dp"
+        tools:layout_editor_absoluteY="362dp" />
 
-    <Button
-        android:id="@+id/button5"
-        android:layout_width="188dp"
-        android:layout_height="47dp"
-        android:background="#8A6262"
+    <EditText
+        android:id="@+id/editTextNumberPassword2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
         android:fontFamily="sans-serif-light"
-        android:text="Insert IP"
+        android:hint="Insert Port"
+        android:inputType="numberPassword"
         android:textAlignment="center"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        app:backgroundTint="#878686"
-        app:cornerRadius="30dp"
-        app:iconPadding="0dp"
-        app:iconTint="#FFFFFF"
-        app:iconTintMode="multiply"
-        tools:layout_editor_absoluteX="111dp"
-        tools:layout_editor_absoluteY="378dp" />
+        tools:layout_editor_absoluteX="100dp"
+        tools:layout_editor_absoluteY="414dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

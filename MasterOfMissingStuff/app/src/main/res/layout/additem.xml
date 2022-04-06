@@ -6,6 +6,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <Button
+        android:id="@+id/button10"
+        android:layout_width="62dp"
+        android:layout_height="60dp"
+        android:background="#A5A4A4"
+        android:fontFamily="sans-serif-light"
+        android:rotation="-180"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        app:backgroundTint="#A5A4A4"
+        app:cornerRadius="30dp"
+        app:icon="@drawable/rightarrow"
+        app:iconPadding="2"
+        app:iconTint="#FFFFFF"
+        app:iconTintMode="multiply"
+        app:rippleColor="#FFFFFF"
+        tools:layout_editor_absoluteX="174dp"
+        tools:layout_editor_absoluteY="603dp" />
+
+    <EditText
+        android:id="@+id/editTextNumberPassword3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:fontFamily="sans-serif-light"
+        android:hint="Insert name"
+        android:inputType="numberPassword"
+        android:textAlignment="center"
+        tools:layout_editor_absoluteX="100dp"
+        tools:layout_editor_absoluteY="278dp" />
+
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
@@ -17,14 +49,6 @@
         android:textSize="24sp"
         tools:layout_editor_absoluteX="133dp"
         tools:layout_editor_absoluteY="232dp" />
-
-    <ImageView
-        android:id="@+id/imageView7"
-        android:layout_width="195dp"
-        android:layout_height="182dp"
-        app:srcCompat="@drawable/placeholder"
-        tools:layout_editor_absoluteX="108dp"
-        tools:layout_editor_absoluteY="293dp" />
 
     <Button
         android:id="@+id/button7"
@@ -43,26 +67,15 @@
         app:iconTint="#FFFFFF"
         app:iconTintMode="multiply"
         tools:layout_editor_absoluteX="84dp"
-        tools:layout_editor_absoluteY="431dp" />
+        tools:layout_editor_absoluteY="507dp" />
 
-    <Button
-        android:id="@+id/button9"
-        android:layout_width="242dp"
-        android:layout_height="54dp"
-        android:background="#8A6262"
-        android:fontFamily="sans-serif-light"
-        android:text="Add name"
-        android:textAlignment="center"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        app:backgroundTint="#878686"
-        app:cornerRadius="30dp"
-        app:icon="@drawable/plus"
-        app:iconPadding="0dp"
-        app:iconTint="#FFFFFF"
-        app:iconTintMode="multiply"
-        tools:layout_editor_absoluteX="84dp"
-        tools:layout_editor_absoluteY="511dp" />
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="165dp"
+        android:layout_height="134dp"
+        app:srcCompat="@drawable/placeholder"
+        tools:layout_editor_absoluteX="123dp"
+        tools:layout_editor_absoluteY="366dp" />
 
     <ImageView
         android:id="@+id/imageView6"

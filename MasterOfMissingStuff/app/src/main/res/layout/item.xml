@@ -5,18 +5,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <Button
+        android:id="@+id/button11"
+        android:layout_width="62dp"
+        android:layout_height="60dp"
+        android:background="#A5A4A4"
+        android:fontFamily="sans-serif-light"
+        android:rotation="-180"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        app:backgroundTint="#A5A4A4"
+        app:cornerRadius="30dp"
+        app:icon="@drawable/rightarrow"
+        app:iconPadding="2"
+        app:iconTint="#FFFFFF"
+        app:iconTintMode="multiply"
+        app:rippleColor="#FFFFFF"
+        tools:layout_editor_absoluteX="174dp"
+        tools:layout_editor_absoluteY="615dp" />
+
     <ImageView
         android:id="@+id/imageView8"
-        android:layout_width="195dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="7dp"
-        android:contentDescription="@string/locate_item"
-        app:layout_constraintBottom_toTopOf="@+id/button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5"
+        android:layout_width="137dp"
+        android:layout_height="138dp"
         app:srcCompat="@drawable/placeholder"
-        tools:ignore="ImageContrastCheck" />
+        tools:layout_editor_absoluteX="137dp"
+        tools:layout_editor_absoluteY="247dp" />
 
     <TextView
         android:id="@+id/textView5"
@@ -49,11 +64,8 @@
         app:iconPadding="0dp"
         app:iconTint="#FFFFFF"
         app:iconTintMode="multiply"
-        app:layout_constraintBottom_toTopOf="@+id/switch1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView8"
-        tools:ignore="TextContrastCheck" />
+        tools:layout_editor_absoluteX="111dp"
+        tools:layout_editor_absoluteY="396dp" />
 
     <ImageView
         android:id="@+id/imageView3"
@@ -83,34 +95,28 @@
         app:iconPadding="0dp"
         app:iconTint="#FFFFFF"
         app:iconTintMode="multiply"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switch2" />
-
-    <Switch
-        android:id="@+id/switch2"
-        android:layout_width="121dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="7dp"
-        android:fontFamily="sans-serif-light"
-        android:text="Track"
-        android:textSize="18dp"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switch1" />
+        tools:layout_editor_absoluteX="136dp"
+        tools:layout_editor_absoluteY="558dp" />
 
     <Switch
         android:id="@+id/switch1"
         android:layout_width="121dp"
         android:layout_height="0dp"
+        android:layout_marginBottom="7dp"
         android:fontFamily="sans-serif-light"
         android:text="Lock"
-        android:textSize="18dp"
-        app:layout_constraintBottom_toTopOf="@+id/switch2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
+        android:textSize="18"
+        tools:layout_editor_absoluteX="145dp"
+        tools:layout_editor_absoluteY="467dp" />
+
+    <Switch
+        android:id="@+id/switch2"
+        android:layout_width="121dp"
+        android:layout_height="0dp"
+        android:fontFamily="sans-serif-light"
+        android:text="Track"
+        android:textSize="18"
+        tools:layout_editor_absoluteX="145dp"
+        tools:layout_editor_absoluteY="509dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

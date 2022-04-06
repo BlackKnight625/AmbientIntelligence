@@ -3,19 +3,27 @@ package com.moms.app.grpc.observers;
 import io.grpc.stub.StreamObserver;
 import pt.tecnico.moms.grpc.Communication;
 
-import static pt.tecnico.moms.grpc.Communication.PhotoResponse.ResponseStatus.*;
-import static pt.tecnico.moms.grpc.Communication.PhotoResponse.ResponseStatus;
-
 public class PhotoTakenObserver implements StreamObserver<Communication.PhotoResponse> {
     @Override
     public void onNext(Communication.PhotoResponse value) {
         onNext(value.getNewItemId().getId(), value.getStatus());
     }
 
-    public void onNext(String newItemId, ResponseStatus status) {
+    public void onNext(String newItemId, Communication.PhotoResponse.ResponseStatus status) {
         //TODO
-        //Cool thing: thanks to one of the imports I did, it's possible to write (status == NO_ITEM_FOUND) instead of
-        // (status == Communication.PhotoResponse.ResponseStatus.NO_ITEMS_FOUND)
+
+        switch (status) {
+            case OK:
+                break;
+            case UNRECOGNIZED:
+                break;
+            case NO_ITEM_FOUND:
+                break;
+            case ITEM_ALREADY_EXISTS:
+                break;
+            case MULTIPLE_ITEMS_FOUND:
+                break;
+        }
     }
 
     @Override

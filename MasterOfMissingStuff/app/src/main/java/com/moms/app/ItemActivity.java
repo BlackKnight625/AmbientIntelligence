@@ -2,13 +2,11 @@ package com.moms.app;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -27,11 +25,11 @@ public class ItemActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Code here executes on main thread after user presses button
-                onOptionsItemSelected();
+                finish();
             }
         });
 
-        final Button remove_button = findViewById(R.id.button11);
+        final Button remove_button = findViewById(R.id.button2);
         remove_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,15 +64,5 @@ public class ItemActivity extends AppCompatActivity {
                 System.out.println("Track is: " + isChecked);
             }
         });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

@@ -19,14 +19,16 @@
         </activity>
         <activity
             android:name=".AddItemActivity"
-            android:label="@string/app_name"
-            android:parentActivityName=".MainActivity"
-        />
+            android:label="@string/app_name" />
         <activity
             android:name=".ItemActivity"
-            android:label="@string/app_name"
-            android:parentActivityName=".AddItemActivity"
-        />
+            android:label="@string/app_name" />
+        <activity
+            android:name=".AddSearchActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".MyItemsActivity"
+            android:label="@string/app_name" />
     </application>
 
 </manifest>

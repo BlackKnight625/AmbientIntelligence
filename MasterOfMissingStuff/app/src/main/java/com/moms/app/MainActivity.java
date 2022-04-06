@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
                 final EditText ip_text =  (EditText) findViewById(R.id.editTextTextPersonName2);
                 final EditText port_text = (EditText) findViewById(R.id.editTextTextPersonName3);
                 //CSFrontend = new CentralSystemFrontend(ip_text.getText().toString(), Integer.parseInt(port_text.getText().toString()));
-                startActivity(new Intent(MainActivity.this, AddItemActivity.class));
+                startActivity(new Intent(getApplicationContext(), AddSearchActivity.class));
             }
         });
     }

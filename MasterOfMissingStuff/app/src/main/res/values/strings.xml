@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Master Of Missing Stuff</string>
+    <string name="moms_logo">moms_logo</string>
+    <string name="locate_item">locate_item</string>
+    <string name="add_new_item">Add new item</string>
+    <string name="new_item">new_item</string>
 </resources>

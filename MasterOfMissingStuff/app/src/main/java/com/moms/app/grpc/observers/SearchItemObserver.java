@@ -18,7 +18,8 @@ public class SearchItemObserver implements StreamObserver<Communication.SearchRe
 
     @Override
     public void onError(Throwable t) {
-
+        System.out.println("Error while receiving an Items Information from a 'locateItem' call: ");
+        t.printStackTrace();
     }
 
     @Override

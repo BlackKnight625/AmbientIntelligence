@@ -26,8 +26,8 @@
 
         <Button
             android:id="@+id/button4"
-            android:layout_width="242dp"
-            android:layout_height="0dp"
+            android:layout_width="244dp"
+            android:layout_height="62dp"
             android:layout_marginBottom="18dp"
             android:background="#8A6262"
             android:fontFamily="sans-serif-light"
@@ -49,8 +49,8 @@
 
         <Button
             android:id="@+id/button6"
-            android:layout_width="242dp"
-            android:layout_height="0dp"
+            android:layout_width="245dp"
+            android:layout_height="62dp"
             android:layout_marginBottom="216dp"
             android:background="#8A6262"
             android:fontFamily="sans-serif-light"

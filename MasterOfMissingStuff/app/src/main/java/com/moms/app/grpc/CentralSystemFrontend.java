@@ -80,10 +80,18 @@ public class CentralSystemFrontend {
         stub.photoTaken(footage, photoStatusObserver);
     }
 
-    public void confirmItemInsertion(String id, ConfirmItemInsertionObserver itemInsertionAckObserver) {
+    public void confirmItemInsertion(String id, boolean tracked, boolean locked, String itemName, ConfirmItemInsertionObserver itemInsertionAckObserver) {
         waitForLoadedStub();
 
-        stub.confirmItemInsertion(getIdFrom(id), itemInsertionAckObserver);
+        Communication.ItemInformation information = Communication.ItemInformation.newBuilder().
+                setItemId(getIdFrom(id)).
+                setTracked(tracked).
+                setLocked(locked).
+                setName(itemName).
+                setImage(ByteString.EMPTY).
+                build();
+
+        stub.confirmItemInsertion(information, itemInsertionAckObserver);
     }
 
     public void searchItem(String itemName, SearchItemObserver searchedItemsObserver) {

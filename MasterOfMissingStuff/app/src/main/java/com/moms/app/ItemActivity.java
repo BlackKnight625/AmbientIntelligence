@@ -1,16 +1,35 @@
 package com.moms.app;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.moms.app.grpc.CentralSystemFrontend;
+import com.moms.app.grpc.observers.LockItemObserver;
+import com.moms.app.grpc.observers.RemoveItemObserver;
+import com.moms.app.grpc.observers.TrackItemObserver;
+import com.moms.app.grpc.observers.UnlockItemObserver;
+import com.moms.app.grpc.observers.UntrackItemObserver;
+
+import pt.tecnico.moms.grpc.Communication;
+
 public class ItemActivity extends AppCompatActivity {
+
+    // Private attributes
+
+    private Communication.ItemInformation itemInformation = null; //TODO must be set on onCreate
+
+    // Other methods
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +54,8 @@ public class ItemActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // Code here executes on main thread after user presses button
                 //startActivity(new Intent(ItemActivity.this, AddItemActivity.class));
+
+                CentralSystemFrontend.FRONTEND.removeItem(itemInformation.getItemId().getId(), new RemoveItemObserver());
             }
         });
 
@@ -53,6 +74,13 @@ public class ItemActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 // Code here executes on main thread after user presses switch
                 System.out.println("Lock is: " + isChecked);
+
+                if(isChecked) {
+                    CentralSystemFrontend.FRONTEND.lockItem(itemInformation.getItemId().getId(), new LockItemObserver());
+                }
+                else {
+                    CentralSystemFrontend.FRONTEND.unlockItem(itemInformation.getItemId().getId(), new UnlockItemObserver());
+                }
             }
         });
 
@@ -62,6 +90,13 @@ public class ItemActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 // Code here executes on main thread after user presses switch
                 System.out.println("Track is: " + isChecked);
+
+                if(isChecked) {
+                    CentralSystemFrontend.FRONTEND.trackItem(itemInformation.getItemId().getId(), new TrackItemObserver());
+                }
+                else {
+                    CentralSystemFrontend.FRONTEND.untrackItem(itemInformation.getItemId().getId(), new UntrackItemObserver());
+                }
             }
         });
     }

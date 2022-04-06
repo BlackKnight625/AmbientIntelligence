@@ -121,7 +121,7 @@ class CameraToCentralSystemService(pb2_grpc.CameraToCentralSystemServiceServicer
 
 class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemServiceServicer):
     def __init__(self, *args, **kwargs):
-        pass
+        self.lastPhotoTaken = None
 
     def locateItem(self, itemId, context):  # Returns VideoFootage
         id = itemId.id
@@ -154,26 +154,31 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
 
     def photoTaken(self, footage, context):  # Returns PhotoResponse
         img_bytes = footage.picture
+        image = imageProcessing.getImageFromBytes(img_bytes)
 
-        items, _ = imageProcessing.processImage(imageProcessing.getImageFromBytes(img_bytes))
+        items, boundingBoxes = imageProcessing.processImage(image)
         photoResponse = pb2.PhotoResponse()
         if len(items) == 0:
-            photoResponse.newItemId = ""
+            photoResponse.newItemId.id = ""
             photoResponse.status = pb2.PhotoResponse.NO_ITEM_FOUND
         elif len(items) > 1:
-            photoResponse.newItemId = ""
+            photoResponse.newItemId.id = ""
             photoResponse.status = pb2.PhotoResponse.MULTIPLE_ITEMS_FOUND
         elif items_storage.has_item(getItemName(items[0])):
-            photoResponse.newItemId = ""
+            photoResponse.newItemId.id = ""
             photoResponse.status = pb2.PhotoResponse.ITEM_ALREADY_EXISTS
         else:
-            photoResponse.newItemId = getItemName(items[0])
+            photoResponse.newItemId.id = getItemName(items[0])
             photoResponse.status = pb2.PhotoResponse.OK
+
+            # Getting a new image containing just the section that has the identified item
+            self.lastPhotoTaken = getSubRect(image, boundingBoxes[0])
         return photoResponse
 
-    def confirmItemInsertion(self, itemID, context):  # Returns Ack
+    def confirmItemInsertion(self, itemInformation, context):  # Returns Ack
         itemsLock.w_acquire()
-        items_storage.insertItem(itemID.id, True, False)
+        items_storage.insertItem(itemInformation.itemId.id, itemInformation.tracked, itemInformation.locked,
+                                 self.lastPhotoTaken, itemInformation.name)
         itemsLock.w_release()
 
         return pb2.Ack()
@@ -183,15 +188,17 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
         itemInformations = []
 
         itemsLock.r_acquire()
-        for triplet in items_storage.get_search_results(searchParameters.itemName):
+        for quintuplet in items_storage.get_search_results(searchParameters.itemName):
             itemInformation = pb2.ItemInformation()
             itemId = pb2.ItemId()
 
-            itemId.id = triplet[0]
+            itemId.id = quintuplet[0]
 
             itemInformation.itemId.CopyFrom(itemId)
-            itemInformation.locked = triplet[1]
-            itemInformation.tracked = triplet[2]
+            itemInformation.locked = quintuplet[1]
+            itemInformation.tracked = quintuplet[2]
+            itemInformation.image = imageProcessing.getBytesFromImage(quintuplet[3])
+            itemInformation.name = quintuplet[4]
 
             itemInformations.append(itemInformation)
 
@@ -314,3 +321,8 @@ def getCv2BoundingBoxFromGrpc(grpcBoundingBox):
         grpcBoundingBox.high.x - grpcBoundingBox.low.x,
         grpcBoundingBox.high.y - grpcBoundingBox.low.y
     ])
+
+
+def getSubRect(image, rect):
+    x, y, w, h = rect
+    return image[y: y + h, x: x + w]

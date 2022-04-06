@@ -34,13 +34,17 @@ public class CentralSystemFrontend {
 
     // Constructors
 
-    public CentralSystemFrontend(String ip, int port) {
+    public CentralSystemFrontend(String ip, String port) {
         new Thread() {
             @Override
             public void run() {
-                channel = ManagedChannelBuilder.forAddress(ip, port).usePlaintext().build();
+                try {
+                    channel = ManagedChannelBuilder.forAddress(ip, Integer.parseInt(port)).usePlaintext().build();
 
-                stub = SmartphoneAppToCentralSystemServiceGrpc.newStub(channel);
+                    stub = SmartphoneAppToCentralSystemServiceGrpc.newStub(channel);
+                } catch (NumberFormatException e) {
+                    System.err.println("Provided port is not an integer: " + port + ". " + e.getMessage());
+                }
 
                 // All future threads that want to use the stub may now do so
                 semaphore.release(Integer.MAX_VALUE);
@@ -80,10 +84,18 @@ public class CentralSystemFrontend {
         stub.photoTaken(footage, photoStatusObserver);
     }
 
-    public void confirmItemInsertion(String id, ConfirmItemInsertionObserver itemInsertionAckObserver) {
+    public void confirmItemInsertion(String id, boolean tracked, boolean locked, String itemName, ConfirmItemInsertionObserver itemInsertionAckObserver) {
         waitForLoadedStub();
 
-        stub.confirmItemInsertion(getIdFrom(id), itemInsertionAckObserver);
+        Communication.ItemInformation information = Communication.ItemInformation.newBuilder().
+                setItemId(getIdFrom(id)).
+                setTracked(tracked).
+                setLocked(locked).
+                setName(itemName).
+                setImage(ByteString.EMPTY).
+                build();
+
+        stub.confirmItemInsertion(information, itemInsertionAckObserver);
     }
 
     public void searchItem(String itemName, SearchItemObserver searchedItemsObserver) {

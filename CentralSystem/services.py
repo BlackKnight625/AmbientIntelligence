@@ -10,6 +10,7 @@ import imageProcessing
 import footageStorage as fs
 import itemsStorage as iS
 import time
+import numpy as np
 
 from RWLock import RWLock
 
@@ -55,17 +56,25 @@ class CameraToCentralSystemService(pb2_grpc.CameraToCentralSystemServiceServicer
         image = imageProcessing.getImageFromBytes(img_bytes)
         items, locations = imageProcessing.processImage(image)
         print("Items:")
-        print(items)
+        print([getItemName(item) for item in items])
         print("\n")
         print("Locations:")
         print(locations)
         print("\n")
-
         print("Received footage! Size: ", len(img_bytes))
+
+        seenItems = set()
 
         # Storing picture information
         for i in range(len(items)):
             item, boundingBox = getItemName(items[i]), locations[i]
+
+            if item in seenItems:
+                # Item has already been seen in the picture, meaning there's at least 2 items of the same type in the picture.
+                # Ignoring similar items
+                continue
+
+            seenItems.add(item)
 
             if items_storage.has_item(item):
                 if items_storage.isLocked(item):
@@ -74,7 +83,8 @@ class CameraToCentralSystemService(pb2_grpc.CameraToCentralSystemServiceServicer
 
                     if lastSeenFootage != None:
                         # This item has been seen before
-                        lastBoundingBox = lastSeenFootage[-1].boundingBox # Fetching the BB from when the item was last seen
+                        lastBoundingBox = lastSeenFootage[
+                            -1].boundingBox  # Fetching the BB from when the item was last seen
 
                         if boundingBox != lastBoundingBox:
                             # Bounding box has moved, therefore, the item moved
@@ -83,12 +93,12 @@ class CameraToCentralSystemService(pb2_grpc.CameraToCentralSystemServiceServicer
                             lockedItemsMovedLock.w_release()
 
                 footageLock.w_acquire()
-                footageStorage.insertPicture(getItemName(item), image, timestamp, boundingBox)
+                footageStorage.insertPicture(item, image, timestamp, boundingBox)
                 footageLock.w_release()
 
         self.footageReceived += 1
 
-        if (self.footageReceived % 10):
+        if self.footageReceived % 10 == 0:
             # Time to save all footage and items
             footageLock.r_acquire()
             fs.saveFootageStorage(footageStorage)
@@ -99,7 +109,7 @@ class CameraToCentralSystemService(pb2_grpc.CameraToCentralSystemServiceServicer
             itemsLock.r_release()
 
         lastFootageReceivedTimeLock.w_acquire()
-        global lastFootageReceivedTime # Needed to change this global variable on the next line
+        global lastFootageReceivedTime  # Needed to change this global variable on the next line
         lastFootageReceivedTime = time.time()
         lastFootageReceivedTimeLock.w_release()
 
@@ -129,7 +139,7 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
 
             boundingBox = getGrpcBoundingBoxFromCv2(footage.boundingBox)
 
-            picture.timestamp = footage.timestamp
+            picture.time.CopyFrom(footage.timestamp)
             picture.picture = imageProcessing.getBytesFromImage(footage.picture)
 
             pictures.append(picture)
@@ -137,8 +147,8 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
 
         footageLock.r_release()
 
-        videoFootageResponse.pictures[:] = pictures
-        videoFootageResponse.itemBoundingBoxes[:] = boundingBoxes
+        videoFootageResponse.pictures.extend(pictures)
+        videoFootageResponse.itemBoundingBoxes.extend(boundingBoxes)
 
         return videoFootageResponse
 
@@ -170,10 +180,24 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
 
     def searchItem(self, searchParameters, context):  # Returns SearchResponse
         searchResponse = pb2.SearchResponse()
+        itemInformations = []
 
         itemsLock.r_acquire()
-        searchResponse.searchResults[:] = items_storage.get_search_results(searchParameters)
+        for triplet in items_storage.get_search_results(searchParameters.itemName):
+            itemInformation = pb2.ItemInformation()
+            itemId = pb2.ItemId()
+
+            itemId.id = triplet[0]
+
+            itemInformation.itemId.CopyFrom(itemId)
+            itemInformation.locked = triplet[1]
+            itemInformation.tracked = triplet[2]
+
+            itemInformations.append(itemInformation)
+
         itemsLock.r_release()
+
+        searchResponse.searchResults.extend(itemInformations)
 
         return searchResponse
 
@@ -210,6 +234,10 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
         items_storage.removeItem(itemID.id)
         itemsLock.w_release()
 
+        footageLock.w_acquire()
+        footageStorage.removeData(itemID.id)
+        footageLock.w_release()
+
         return pb2.Ack()
 
     def statusRequest(self, request, context):
@@ -221,7 +249,16 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
             # Locked items have been moved
 
             itemIdList = pb2.ItemIdList()
-            itemIdList.items[:] = lockedItemsMoved
+
+            itemIds = []
+
+            # Creating ItemId grpc objects for every item string present
+            for item in lockedItemsMoved:
+                itemId = pb2.ItemId()
+                itemId.id = item
+                itemIds.append(itemId)
+
+            itemIdList.items.extend(itemIds)
 
             lockedItemsMovedLock.r_release()
 
@@ -231,7 +268,7 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
             lockedItemsMovedLock.w_release()
 
             response.status = pb2.StatusResponse.LOCKED_ITEMS_MOVED
-            response.movedLockedItems = itemIdList
+            response.movedLockedItems.CopyFrom(itemIdList)
         else:
             lockedItemsMovedLock.r_release()
 
@@ -263,10 +300,19 @@ def getGrpcBoundingBoxFromCv2(cvsBoundingBox):
 
     pointHigh.x = cvsBoundingBox[0] + cvsBoundingBox[2]  # x_min + width
     pointHigh.y = cvsBoundingBox[1] + cvsBoundingBox[3]  # y_min + height
-    pointLow.x = cvsBoundingBox[1]  # x_min
+    pointLow.x = cvsBoundingBox[0]  # x_min
     pointLow.y = cvsBoundingBox[1]  # y_min
 
-    boundingBox.high = pointHigh
-    boundingBox.low = pointLow
+    boundingBox.high.CopyFrom(pointHigh)
+    boundingBox.low.CopyFrom(pointLow)
 
     return boundingBox
+
+
+def getCv2BoundingBoxFromGrpc(grpcBoundingBox):
+    return np.array([
+        grpcBoundingBox.low.x,
+        grpcBoundingBox.low.y,
+        grpcBoundingBox.high.x - grpcBoundingBox.low.x,
+        grpcBoundingBox.high.y - grpcBoundingBox.low.y
+    ])

@@ -32,8 +32,11 @@ def getBytesFromImage(image):
         return bytes.tobytes()
 
 def getImageFromBytesFile(imageFilename):
+    return getImageFromBytes(getImageBytesFromBytesFile(imageFilename))
+
+def getImageBytesFromBytesFile(imageFilename):
     imageFileObj = open(imageFilename, "rb")
     imageBinaryBytes = imageFileObj.read()
     imageFileObj.close()
 
-    return getImageFromBytes(imageBinaryBytes)
+    return imageBinaryBytes

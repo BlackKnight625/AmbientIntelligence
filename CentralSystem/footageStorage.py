@@ -52,6 +52,10 @@ class FootageStorage:
 
         footage.append(Footage(picture, timestamp, boundingBox))
 
+    def removeData(self, itemId):
+        if itemId in self.map:
+            del self.map[itemId]
+
     def removeOutdatedPictures(self, itemId, currentTimestamp):
         footage = self.map[itemId]
 

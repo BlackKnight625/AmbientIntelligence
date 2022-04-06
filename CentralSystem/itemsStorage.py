@@ -67,7 +67,7 @@ class ItemsStorage:
         ix = 0
         for i in self.dic:
             if items[ix] == 0:
-                item = [i] + list(self.dic[i].values())
+                item = [i] + [self.dic[i][lock]] + [self.dic[i][track]]
                 res.append(item)
             ix += 1
         return res

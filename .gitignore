@@ -93,3 +93,6 @@ CentralSystem/.idea/modules.xml
 CentralSystem/.idea/misc.xml
 CentralSystem/.idea/inspectionProfiles/profiles_settings.xml
 CentralSystem/data/footageStorage.pickle
+CentralSystem/data/footageStorageTest.pickle
+CentralSystem/data/itemStorage.pickle
+CentralSystem/data/itemStorageTest.pickle

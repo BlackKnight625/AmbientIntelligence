@@ -65,7 +65,7 @@ class CameraToCentralSystemService(pb2_grpc.CameraToCentralSystemServiceServicer
 
         # Storing picture information
         for i in range(len(items)):
-            item, boundingBox = items[i], locations[i]
+            item, boundingBox = getItemName(items[i]), locations[i]
 
             if items_storage.has_item(item):
                 if items_storage.isLocked(item):
@@ -213,15 +213,47 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
         return pb2.Ack()
 
     def statusRequest(self, request, context):
+        response = pb2.StatusResponse()
+
         lockedItemsMovedLock.r_acquire()
 
         if len(lockedItemsMoved) != 0:
-            # Items have been moved
+            # Locked items have been moved
+
+            itemIdList = pb2.ItemIdList()
+            itemIdList.items[:] = lockedItemsMoved
+
             lockedItemsMovedLock.r_release()
 
+            # Clearing all items off the list
+            lockedItemsMovedLock.w_lock()
+            lockedItemsMoved.clear()
+            lockedItemsMovedLock.w_release()
 
+            response.status = pb2.StatusResponse.LOCKED_ITEMS_MOVED
+            response.movedLockedItems = itemIdList
         else:
             lockedItemsMovedLock.r_release()
+
+            # No locked items have moved. Checking last time footage was received
+
+            lastFootageReceivedTimeLock.r_acquire()
+            timeDifference = time.time() - lastFootageReceivedTime
+            lastFootageReceivedTimeLock.r_release()
+
+            if timeDifference >= lastFootageReceivedTimeout:
+                # Camera hasn't sent footage in a long time
+
+                response.status = pb2.StatusResponse.LOCKED_ITEMS_MOVED
+                response.offCameraInfo = "Surveillance Camera has been offline for " + str(timeDifference)
+            else:
+                # There's nothing wrong
+                lastFootageReceivedTimeLock.r_release()
+
+                response.status = pb2.StatusResponse.OK
+                response.ok = pb2.Ack()
+
+        return response
 
 
 def getGrpcBoundingBoxFromCv2(cvsBoundingBox):

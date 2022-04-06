@@ -65,6 +65,10 @@ class TimeStamp:
         return timestamp
 
 class ImageStorageTests(unittest.TestCase):
+    def setUp(self) -> None:
+        iS.filename = "data/itemStorageTest.pickle"
+        fs.filename = "data/footageStorageTest.pickle"
+
     def create_storage(self):
         self.footage = fs.FootageStorage()
 
@@ -121,13 +125,6 @@ class ImageStorageTests(unittest.TestCase):
         self.assertEqual(lastFootage[0].timestamp, otherFootage[0].timestamp)
         self.assertEqual(lastFootage[0].boundingBox, otherFootage[0].boundingBox)
 
-    def test_print_saved_info(self):
-        lastFootage = fs.loadFootageStorage().getLastSeenFootageAndInformation(simpleItemId)
-
-        print("Image: ", lastFootage[0].picture)
-        print("Timestamp: ", lastFootage[0].timestamp)
-        print("BoundingBox: ", lastFootage[0].boundingBox)
-
 
 class ServiceTests(unittest.TestCase):
     def setUp(self):
@@ -135,7 +132,7 @@ class ServiceTests(unittest.TestCase):
         self.smartphoneService = services.SmartphoneAppToCentralSystemService()
 
         iS.filename = "data/itemStorageTest.pickle"
-        fs.filename = "data/footageStorage.pickle"
+        fs.filename = "data/footageStorageTest.pickle"
         services.footageStorage = fs.FootageStorage()
         services.items_storage = iS.ItemsStorage()
         services.lockedItemsMoved.clear()

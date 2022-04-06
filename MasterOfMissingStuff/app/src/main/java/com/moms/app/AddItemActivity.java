@@ -1,41 +1,36 @@
 package com.moms.app;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
 import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-public class MainActivity extends AppCompatActivity {
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+public class AddItemActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.insertip);
+        setContentView(R.layout.additem);
 
         getSupportActionBar().hide();
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);//  set status text dark
-        getWindow().setStatusBarColor(ContextCompat.getColor(MainActivity.this,R.color.white));// set status background white
+        getWindow().setStatusBarColor(ContextCompat.getColor(AddItemActivity.this,R.color.white));// set status background white
 
-        final Button insert_ip_button = findViewById(R.id.button5);
-        insert_ip_button.setOnClickListener(new View.OnClickListener() {
+        final Button add_picture_button = findViewById(R.id.button7);
+        add_picture_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Code here executes on main thread after user presses button
-                System.out.println("Pressed ip button");
             }
         });
 
-        final Button insert_port_button = findViewById(R.id.button8);
-        insert_port_button.setOnClickListener(new View.OnClickListener() {
+        final Button add_name_button = findViewById(R.id.button9);
+        add_name_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Code here executes on main thread after user presses button
-                System.out.println("Pressed port button");
             }
         });
 
@@ -49,4 +44,5 @@ public class MainActivity extends AppCompatActivity {
         startActivity(sendIntent);
          */
     }
+
 }

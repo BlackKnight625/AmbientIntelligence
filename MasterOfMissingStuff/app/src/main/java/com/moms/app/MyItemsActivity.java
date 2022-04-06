@@ -3,10 +3,15 @@ package com.moms.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MyItemsActivity extends AppCompatActivity {
 
@@ -18,6 +23,16 @@ public class MyItemsActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);//  set status text dark
         getWindow().setStatusBarColor(ContextCompat.getColor(MyItemsActivity.this,R.color.white));// set status background white
+
+        ListView listView = (ListView) findViewById(R.id.listview);
+        List<Item> items = new ArrayList<>();
+        items.add(new Item("Toothbrush"));
+        items.add(new Item("Car"));
+        items.add(new Item("Zebra"));
+        items.add(new Item("Remote"));
+
+        ItemAdapter itemAdapter = new ItemAdapter(this, R.layout.list_row, items);
+        listView.setAdapter(itemAdapter);
 
         final Button back_button = findViewById(R.id.button9);
         back_button.setOnClickListener(new View.OnClickListener() {

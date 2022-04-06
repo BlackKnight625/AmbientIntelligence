@@ -74,6 +74,28 @@ message PhotoResponse {
 
 message Ack {}
 
+message StatusRequest {}
+
+message ItemIdList {
+    repeated ItemId items = 1;
+}
+
+message StatusResponse {
+    enum Status {
+        OK = 0;
+        LOCKED_ITEMS_MOVED = 1;
+        CAMERA_TURNED_OFF = 2;
+    }
+
+    oneof StatusInformation {
+        Ack ok = 1;
+        ItemIdList movedLockedItems = 2; //proto doesn't let me put "repeat" here, so a new message was created
+        string offCameraInfo = 3;
+    }
+
+    Status status = 10;
+}
+
 service SmartphoneAppToCentralSystemService {
     /* Called when the user has an item selected on the "find" menu and presses "locate".
         Returns video footage of the last seen location of the item (last 5 seconds), as well
@@ -128,4 +150,11 @@ service SmartphoneAppToCentralSystemService {
         Returns an Ack.
      */
     rpc removeItem(ItemId) returns (Ack);
+
+    /* Called every so often by the SmartPhone App to request the Central System's status.
+        Returns Status 'OK' if everything's fine, or
+        returns 'LOCKED_ITEMS_MOVED' if at least 1 locked item was detected moving and a list containing the moved item IDs, or
+        returns 'CAMERA_TURNED_OFF' if a camera turned off (briefly or permanently) and a string containing a message saying what happened.
+     */
+    rpc statusRequest(StatusRequest) returns (StatusResponse);
 }

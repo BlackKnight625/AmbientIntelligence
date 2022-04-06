@@ -1,17 +1,29 @@
 import sys
+import pickle
+import os
+from os.path import exists as file_exists
 
 sys.path.insert(1, '../GrpcContract/target')
 
-import communication_pb2 as pb2
-
 lock = "locked"
 track = "tracked"
+filename = "data/itemStorage.pickle"
 
 def loadItemsStorage():
-    pass
+    if file_exists(filename):
+        file = open(filename, 'rb')
+        footage = pickle.load(file)
+        file.close()
 
-def saveItemsStorage():
-    pass
+        return footage
+    else:
+        return ItemsStorage()
+
+def saveItemsStorage(itemsStorage):
+    os.makedirs("data", exist_ok=True)
+    file = open(filename, 'wb')
+    pickle.dump(itemsStorage, file)
+    file.close()
 
 class ItemsStorage:
     def __init__(self):
@@ -55,7 +67,7 @@ class ItemsStorage:
         ix = 0
         for i in self.dic:
             if items[ix] == 0:
-                item = [i] + list(self.dic[i].values())
+                item = [i] + [self.dic[i][lock]] + [self.dic[i][track]]
                 res.append(item)
             ix += 1
         return res

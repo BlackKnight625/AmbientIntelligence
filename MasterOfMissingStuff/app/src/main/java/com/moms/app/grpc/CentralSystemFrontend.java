@@ -34,13 +34,17 @@ public class CentralSystemFrontend {
 
     // Constructors
 
-    public CentralSystemFrontend(String ip, int port) {
+    public CentralSystemFrontend(String ip, String port) {
         new Thread() {
             @Override
             public void run() {
-                channel = ManagedChannelBuilder.forAddress(ip, port).usePlaintext().build();
+                try {
+                    channel = ManagedChannelBuilder.forAddress(ip, Integer.parseInt(port)).usePlaintext().build();
 
-                stub = SmartphoneAppToCentralSystemServiceGrpc.newStub(channel);
+                    stub = SmartphoneAppToCentralSystemServiceGrpc.newStub(channel);
+                } catch (NumberFormatException e) {
+                    System.err.println("Provided port is not an integer: " + port + ". " + e.getMessage());
+                }
 
                 // All future threads that want to use the stub may now do so
                 semaphore.release(Integer.MAX_VALUE);

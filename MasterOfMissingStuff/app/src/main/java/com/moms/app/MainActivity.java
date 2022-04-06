@@ -17,6 +17,7 @@ import com.moms.app.grpc.CentralSystemFrontend;
 public class MainActivity extends AppCompatActivity {
     public static CentralSystemFrontend CSFrontend;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
                 // Code here executes on main thread after user presses button
                 final EditText ip_text =  (EditText) findViewById(R.id.editTextTextPersonName2);
                 final EditText port_text = (EditText) findViewById(R.id.editTextTextPersonName3);
+
+                CentralSystemFrontend.FRONTEND = new CentralSystemFrontend(ip_text.getText().toString(), port_text.getText().toString());
+
                 //CSFrontend = new CentralSystemFrontend(ip_text.getText().toString(), Integer.parseInt(port_text.getText().toString()));
                 startActivity(new Intent(getApplicationContext(), AddSearchActivity.class));
             }

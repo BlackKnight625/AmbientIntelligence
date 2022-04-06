@@ -22,7 +22,7 @@ itemsLock = RWLock()
 items_storage = iS.loadItemsStorage()
 
 lockedItemsMovedLock = RWLock()
-lockedItemsMoved = []
+lockedItemsMoved = set()
 
 lastFootageReceivedTimeLock = RWLock()
 lastFootageReceivedTime = time.time()
@@ -86,10 +86,10 @@ class CameraToCentralSystemService(pb2_grpc.CameraToCentralSystemServiceServicer
                         lastBoundingBox = lastSeenFootage[
                             -1].boundingBox  # Fetching the BB from when the item was last seen
 
-                        if boundingBox != lastBoundingBox:
+                        if (boundingBox != lastBoundingBox).any():
                             # Bounding box has moved, therefore, the item moved
                             lockedItemsMovedLock.w_acquire()
-                            lockedItemsMoved.append(item)
+                            lockedItemsMoved.add(item)
                             lockedItemsMovedLock.w_release()
 
                 footageLock.w_acquire()
@@ -263,7 +263,7 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
             lockedItemsMovedLock.r_release()
 
             # Clearing all items off the list
-            lockedItemsMovedLock.w_lock()
+            lockedItemsMovedLock.w_acquire()
             lockedItemsMoved.clear()
             lockedItemsMovedLock.w_release()
 
@@ -281,14 +281,12 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
             if timeDifference >= lastFootageReceivedTimeout:
                 # Camera hasn't sent footage in a long time
 
-                response.status = pb2.StatusResponse.LOCKED_ITEMS_MOVED
+                response.status = pb2.StatusResponse.CAMERA_TURNED_OFF
                 response.offCameraInfo = "Surveillance Camera has been offline for " + str(timeDifference)
             else:
                 # There's nothing wrong
-                lastFootageReceivedTimeLock.r_release()
-
                 response.status = pb2.StatusResponse.OK
-                response.ok = pb2.Ack()
+                response.ok.CopyFrom(pb2.Ack())
 
         return response
 

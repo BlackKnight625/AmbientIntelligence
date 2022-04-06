@@ -8,7 +8,8 @@
     <Button
         android:id="@+id/button8"
         android:layout_width="62dp"
-        android:layout_height="60dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="150dp"
         android:background="#8A6262"
         android:fontFamily="sans-serif-light"
         android:textAlignment="center"
@@ -17,43 +18,59 @@
         app:backgroundTint="#A1A1A1"
         app:cornerRadius="30dp"
         app:icon="@drawable/rightarrow"
-        app:iconPadding="2"
+        app:iconPadding="2dp"
         app:iconTint="#FFFFFF"
         app:iconTintMode="multiply"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextNumberPassword2"
         app:rippleColor="#FFFFFF"
-        tools:layout_editor_absoluteX="174dp"
-        tools:layout_editor_absoluteY="521dp" />
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <ImageView
         android:id="@+id/imageView9"
         android:layout_width="230dp"
-        android:layout_height="142dp"
-        app:srcCompat="@drawable/momslogo"
-        tools:layout_editor_absoluteX="90dp"
-        tools:layout_editor_absoluteY="149dp" />
+        android:layout_height="0dp"
+        android:layout_marginTop="149dp"
+        android:layout_marginBottom="71dp"
+        android:contentDescription="@string/moms_logo"
+        app:layout_constraintBottom_toTopOf="@+id/editTextNumberPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/momslogo" />
 
     <EditText
         android:id="@+id/editTextNumberPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="7dp"
         android:ems="10"
         android:fontFamily="sans-serif-light"
         android:hint="Insert IP"
         android:inputType="numberPassword"
         android:textAlignment="center"
-        tools:layout_editor_absoluteX="100dp"
-        tools:layout_editor_absoluteY="362dp" />
+        app:layout_constraintBottom_toTopOf="@+id/editTextNumberPassword2"
+        app:layout_constraintStart_toStartOf="@+id/imageView9"
+        app:layout_constraintTop_toBottomOf="@+id/imageView9"
+        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
     <EditText
         android:id="@+id/editTextNumberPassword2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="62dp"
         android:ems="10"
         android:fontFamily="sans-serif-light"
         android:hint="Insert Port"
         android:inputType="numberPassword"
         android:textAlignment="center"
-        tools:layout_editor_absoluteX="100dp"
-        tools:layout_editor_absoluteY="414dp" />
+        app:layout_constraintBottom_toTopOf="@+id/button8"
+        app:layout_constraintStart_toStartOf="@+id/editTextNumberPassword"
+        app:layout_constraintTop_toBottomOf="@+id/editTextNumberPassword"
+        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

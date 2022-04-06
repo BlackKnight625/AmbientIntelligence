@@ -8,7 +8,8 @@
     <Button
         android:id="@+id/button10"
         android:layout_width="62dp"
-        android:layout_height="60dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="68dp"
         android:background="#A5A4A4"
         android:fontFamily="sans-serif-light"
         android:rotation="-180"
@@ -18,45 +19,57 @@
         app:backgroundTint="#A5A4A4"
         app:cornerRadius="30dp"
         app:icon="@drawable/rightarrow"
-        app:iconPadding="2"
+        app:iconPadding="2dp"
         app:iconTint="#FFFFFF"
         app:iconTintMode="multiply"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button7"
         app:rippleColor="#FFFFFF"
-        tools:layout_editor_absoluteX="174dp"
-        tools:layout_editor_absoluteY="603dp" />
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <EditText
         android:id="@+id/editTextNumberPassword3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="43dp"
         android:ems="10"
         android:fontFamily="sans-serif-light"
-        android:hint="Insert name"
+        android:hint="@string/insert_name"
         android:inputType="numberPassword"
         android:textAlignment="center"
-        tools:layout_editor_absoluteX="100dp"
-        tools:layout_editor_absoluteY="278dp" />
+        app:layout_constraintBottom_toTopOf="@+id/imageView7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4"
+        tools:ignore="TouchTargetSizeCheck,TextContrastCheck"
+        android:autofillHints="" />
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="33dp"
+        android:layout_marginLeft="33dp"
+        android:layout_marginBottom="10dp"
         android:fontFamily="sans-serif-light"
         android:text="@string/add_new_item"
         android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="24sp"
-        tools:layout_editor_absoluteX="133dp"
-        tools:layout_editor_absoluteY="236dp" />
+        app:layout_constraintBottom_toTopOf="@+id/editTextNumberPassword3"
+        app:layout_constraintStart_toStartOf="@+id/editTextNumberPassword3"
+        app:layout_constraintTop_toBottomOf="@+id/imageView6" />
 
     <Button
         android:id="@+id/button7"
         android:layout_width="242dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="26dp"
+        android:layout_marginBottom="44dp"
         android:background="#8A6262"
         android:fontFamily="sans-serif-light"
-        android:text="Add picture"
+        android:text="@string/add_picture"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textSize="14sp"
@@ -66,16 +79,24 @@
         app:iconPadding="0dp"
         app:iconTint="#FFFFFF"
         app:iconTintMode="multiply"
-        tools:layout_editor_absoluteX="84dp"
-        tools:layout_editor_absoluteY="507dp" />
+        app:layout_constraintBottom_toTopOf="@+id/button10"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView7"
+        tools:ignore="TextContrastCheck,DuplicateSpeakableTextCheck" />
 
     <ImageView
         android:id="@+id/imageView7"
         android:layout_width="165dp"
-        android:layout_height="134dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="7dp"
+        android:contentDescription="@string/add_picture"
+        app:layout_constraintBottom_toTopOf="@+id/button7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextNumberPassword3"
         app:srcCompat="@drawable/placeholder"
-        tools:layout_editor_absoluteX="123dp"
-        tools:layout_editor_absoluteY="366dp" />
+        tools:ignore="ImageContrastCheck" />
 
     <ImageView
         android:id="@+id/imageView6"

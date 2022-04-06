@@ -21,21 +21,12 @@ public class MainActivity extends AppCompatActivity {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);//  set status text dark
         getWindow().setStatusBarColor(ContextCompat.getColor(MainActivity.this,R.color.white));// set status background white
 
-        final Button insert_ip_button = findViewById(R.id.button5);
-        insert_ip_button.setOnClickListener(new View.OnClickListener() {
+        final Button next_layout_button = findViewById(R.id.button8);
+        next_layout_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Code here executes on main thread after user presses button
                 System.out.println("Pressed ip button");
-            }
-        });
-
-        final Button insert_port_button = findViewById(R.id.button8);
-        insert_port_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Code here executes on main thread after user presses button
-                System.out.println("Pressed port button");
             }
         });
 

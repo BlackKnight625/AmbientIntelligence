@@ -14,16 +14,21 @@
         <ImageView
             android:id="@+id/imageView5"
             android:layout_width="230dp"
-            android:layout_height="142dp"
-            app:srcCompat="@drawable/momslogo"
-            tools:layout_editor_absoluteX="96dp"
-            tools:layout_editor_absoluteY="188dp" />
+            android:layout_height="0dp"
+            android:layout_marginTop="188dp"
+            android:layout_marginBottom="63dp"
+            android:contentDescription="@string/moms_logo"
+            app:layout_constraintBottom_toTopOf="@+id/button4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/momslogo" />
 
         <Button
             android:id="@+id/button4"
             android:layout_width="242dp"
             android:layout_height="0dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="18dp"
             android:background="#8A6262"
             android:fontFamily="sans-serif-light"
             android:text="Add item    "
@@ -36,14 +41,17 @@
             app:iconPadding="0dp"
             app:iconTint="#FFFFFF"
             app:iconTintMode="multiply"
-            tools:layout_editor_absoluteX="84dp"
-            tools:layout_editor_absoluteY="393dp" />
+            app:layout_constraintBottom_toTopOf="@+id/button6"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView5"
+            tools:ignore="TextContrastCheck" />
 
         <Button
             android:id="@+id/button6"
             android:layout_width="242dp"
             android:layout_height="0dp"
-            android:layout_marginBottom="238dp"
+            android:layout_marginBottom="216dp"
             android:background="#8A6262"
             android:fontFamily="sans-serif-light"
             android:text="Search for item"
@@ -56,8 +64,11 @@
             app:iconPadding="0dp"
             app:iconTint="#FFFFFF"
             app:iconTintMode="multiply"
-            tools:layout_editor_absoluteX="84dp"
-            tools:layout_editor_absoluteY="463dp" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button4"
+            tools:ignore="TextContrastCheck" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

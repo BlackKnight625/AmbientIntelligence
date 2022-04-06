@@ -26,14 +26,6 @@ public class AddItemActivity extends AppCompatActivity {
             }
         });
 
-        final Button add_name_button = findViewById(R.id.button9);
-        add_name_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Code here executes on main thread after user presses button
-            }
-        });
-
         /*
         // Create the text message with a string
         Intent sendIntent = new Intent();

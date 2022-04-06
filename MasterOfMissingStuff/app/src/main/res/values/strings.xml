@@ -4,4 +4,6 @@
     <string name="locate_item">locate_item</string>
     <string name="add_new_item">Add new item</string>
     <string name="new_item">new_item</string>
+    <string name="add_picture">Add picture</string>
+    <string name="insert_name">Insert name</string>
 </resources>

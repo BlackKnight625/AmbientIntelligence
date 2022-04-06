@@ -8,7 +8,8 @@
     <Button
         android:id="@+id/button11"
         android:layout_width="62dp"
-        android:layout_height="60dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="56dp"
         android:background="#A5A4A4"
         android:fontFamily="sans-serif-light"
         android:rotation="-180"
@@ -18,20 +19,29 @@
         app:backgroundTint="#A5A4A4"
         app:cornerRadius="30dp"
         app:icon="@drawable/rightarrow"
-        app:iconPadding="2"
+        app:iconPadding="2dp"
         app:iconTint="#FFFFFF"
         app:iconTintMode="multiply"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button2"
         app:rippleColor="#FFFFFF"
-        tools:layout_editor_absoluteX="174dp"
-        tools:layout_editor_absoluteY="615dp" />
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <ImageView
         android:id="@+id/imageView8"
         android:layout_width="137dp"
-        android:layout_height="138dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="247dp"
+        android:layout_marginBottom="11dp"
+        android:contentDescription="@string/locate_item"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/placeholder"
-        tools:layout_editor_absoluteX="137dp"
-        tools:layout_editor_absoluteY="247dp" />
+        tools:ignore="ImageContrastCheck" />
 
     <TextView
         android:id="@+id/textView5"
@@ -52,7 +62,7 @@
         android:id="@+id/button"
         android:layout_width="188dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="37dp"
+        android:layout_marginBottom="23dp"
         android:background="#8A6262"
         android:fontFamily="sans-serif-light"
         android:text="Locate item"
@@ -64,8 +74,11 @@
         app:iconPadding="0dp"
         app:iconTint="#FFFFFF"
         app:iconTintMode="multiply"
-        tools:layout_editor_absoluteX="111dp"
-        tools:layout_editor_absoluteY="396dp" />
+        app:layout_constraintBottom_toTopOf="@+id/switch1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView8"
+        tools:ignore="TextContrastCheck" />
 
     <ImageView
         android:id="@+id/imageView3"
@@ -83,7 +96,7 @@
         android:id="@+id/button2"
         android:layout_width="138dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="84dp"
+        android:layout_marginBottom="9dp"
         android:background="#8A6262"
         android:fontFamily="sans-serif-light"
         android:text="Remove"
@@ -95,28 +108,35 @@
         app:iconPadding="0dp"
         app:iconTint="#FFFFFF"
         app:iconTintMode="multiply"
-        tools:layout_editor_absoluteX="136dp"
-        tools:layout_editor_absoluteY="558dp" />
+        app:layout_constraintBottom_toTopOf="@+id/button11"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switch2" />
 
     <Switch
         android:id="@+id/switch1"
         android:layout_width="121dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="7dp"
+        android:layout_marginBottom="15dp"
         android:fontFamily="sans-serif-light"
         android:text="Lock"
-        android:textSize="18"
-        tools:layout_editor_absoluteX="145dp"
-        tools:layout_editor_absoluteY="467dp" />
+        android:textSize="18dp"
+        app:layout_constraintBottom_toTopOf="@+id/switch2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button" />
 
     <Switch
         android:id="@+id/switch2"
         android:layout_width="121dp"
         android:layout_height="0dp"
+        android:layout_marginBottom="22dp"
         android:fontFamily="sans-serif-light"
         android:text="Track"
-        android:textSize="18"
-        tools:layout_editor_absoluteX="145dp"
-        tools:layout_editor_absoluteY="509dp" />
+        android:textSize="18dp"
+        app:layout_constraintBottom_toTopOf="@+id/button2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switch1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

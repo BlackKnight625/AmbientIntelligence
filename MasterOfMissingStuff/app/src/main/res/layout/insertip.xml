@@ -51,12 +51,13 @@
         android:layout_marginBottom="13dp"
         android:ems="10"
         android:fontFamily="sans-serif-light"
+        android:hint="Insert IP"
         android:inputType="textPersonName"
-        android:text="Insert IP"
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@+id/editTextTextPersonName3"
         app:layout_constraintStart_toStartOf="@+id/imageView9"
-        app:layout_constraintTop_toBottomOf="@+id/imageView9" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView9"
+        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
     <EditText
         android:id="@+id/editTextTextPersonName3"
@@ -65,11 +66,12 @@
         android:layout_marginBottom="302dp"
         android:ems="10"
         android:fontFamily="sans-serif-light"
+        android:hint="Insert Port"
         android:inputType="textPersonName"
-        android:text="Insert Port"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName2"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName2" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName2"
+        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

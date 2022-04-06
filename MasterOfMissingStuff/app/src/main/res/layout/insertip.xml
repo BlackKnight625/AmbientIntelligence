@@ -33,47 +33,43 @@
     <ImageView
         android:id="@+id/imageView9"
         android:layout_width="234dp"
-        android:layout_height="178dp"
+        android:layout_height="0dp"
         android:layout_marginTop="100dp"
-        android:layout_marginBottom="71dp"
+        android:layout_marginBottom="48dp"
         android:contentDescription="@string/moms_logo"
-        app:layout_constraintBottom_toTopOf="@+id/editTextNumberPassword"
+        app:layout_constraintBottom_toTopOf="@+id/editTextTextPersonName2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/momslogo" />
 
     <EditText
-        android:id="@+id/editTextNumberPassword"
+        android:id="@+id/editTextTextPersonName2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="330dp"
-        android:layout_marginBottom="1dp"
+        android:layout_marginBottom="13dp"
         android:ems="10"
         android:fontFamily="sans-serif-light"
-        android:hint="Insert IP"
-        android:inputType="numberPassword"
+        android:inputType="textPersonName"
+        android:text="Insert IP"
         android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@+id/editTextNumberPassword2"
+        app:layout_constraintBottom_toTopOf="@+id/editTextTextPersonName3"
         app:layout_constraintStart_toStartOf="@+id/imageView9"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView9" />
 
     <EditText
-        android:id="@+id/editTextNumberPassword2"
+        android:id="@+id/editTextTextPersonName3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="302dp"
         android:ems="10"
         android:fontFamily="sans-serif-light"
-        android:hint="Insert Port"
-        android:inputType="numberPassword"
+        android:inputType="textPersonName"
+        android:text="Insert Port"
         android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@+id/button8"
-        app:layout_constraintStart_toStartOf="@+id/editTextNumberPassword"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumberPassword"
-        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName2"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

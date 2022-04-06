@@ -30,41 +30,38 @@
         tools:ignore="SpeakableTextPresentCheck" />
 
     <EditText
-        android:id="@+id/editTextNumberPassword3"
+        android:id="@+id/editTextTextPersonName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="43dp"
+        android:layout_marginBottom="38dp"
         android:ems="10"
         android:fontFamily="sans-serif-light"
-        android:hint="@string/insert_name"
-        android:inputType="numberPassword"
+        android:inputType="textPersonName"
+        android:text="Insert name"
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@+id/imageView7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
-        tools:ignore="TouchTargetSizeCheck,TextContrastCheck"
-        android:autofillHints="" />
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="33dp"
-        android:layout_marginLeft="33dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="15dp"
         android:fontFamily="sans-serif-light"
         android:text="@string/add_new_item"
         android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextNumberPassword3"
-        app:layout_constraintStart_toStartOf="@+id/editTextNumberPassword3"
+        app:layout_constraintBottom_toTopOf="@+id/editTextTextPersonName"
+        app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName"
         app:layout_constraintTop_toBottomOf="@+id/imageView6" />
 
     <Button
         android:id="@+id/button7"
-        android:layout_width="245dp"
+        android:layout_width="223dp"
         android:layout_height="53dp"
         android:layout_marginBottom="44dp"
         android:background="#8A6262"
@@ -94,7 +91,7 @@
         app:layout_constraintBottom_toTopOf="@+id/button7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumberPassword3"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName"
         app:srcCompat="@drawable/placeholder"
         tools:ignore="ImageContrastCheck" />
 
@@ -102,8 +99,8 @@
         android:id="@+id/imageView6"
         android:layout_width="230dp"
         android:layout_height="0dp"
-        android:layout_marginTop="51dp"
-        android:layout_marginBottom="39dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="40dp"
         app:layout_constraintBottom_toTopOf="@+id/textView4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

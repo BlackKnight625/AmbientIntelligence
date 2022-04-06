@@ -3,13 +3,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion "31.0.0"
+    compileSdk 32
+    buildToolsVersion '32.0.0'
 
     defaultConfig {
         applicationId "com.moms.app"
-        minSdkVersion 19
-        targetSdkVersion 31
+        minSdk 16
+        targetSdk 32
         versionCode 1
         versionName "1.0"
 
@@ -22,9 +22,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+
+    packagingOptions {
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/io.netty.versions.properties'
     }
 }
 
@@ -36,4 +37,12 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    //Grpc
+    implementation 'io.grpc:grpc-netty:1.45.0'
+    implementation 'io.grpc:grpc-protobuf:1.45.0'
+    implementation 'io.grpc:grpc-stub:1.45.0'
+
+    //Grpc generated files
+    implementation files('../../GrpcContract/target/communication-1.0.0.jar')
 }

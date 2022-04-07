@@ -11,11 +11,11 @@ import numpy as np
 from os import listdir
 import random
 
-testPictureFilename = "../PictureReceivingTest/images/2,56,45.imageBytes"
-testPictureFilename2 = "../PictureReceivingTest/images/2,56,46.imageBytes"
-testPictureFilename3 = "../PictureReceivingTest/images/2,56,48.imageBytes"
-singlePersonFilename = "../PictureReceivingTest/images/person.jpg"
-nothingFilename = "../PictureReceivingTest/images/nothing.jpg"
+testPictureFilename = "../archive/images/2,56,45.imageBytes"
+testPictureFilename2 = "../archive/images/2,56,46.imageBytes"
+testPictureFilename3 = "../archive/images/2,56,48.imageBytes"
+singlePersonFilename = "../archive/images/person.jpg"
+nothingFilename = "../archive/images/nothing.jpg"
 simpleItemId = "abc"
 
 

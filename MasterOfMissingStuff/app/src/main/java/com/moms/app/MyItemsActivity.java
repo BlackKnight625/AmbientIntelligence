@@ -1,31 +1,39 @@
 package com.moms.app;
 
+import static java.util.stream.Collectors.toList;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.google.protobuf.ByteString;
 import com.moms.app.grpc.CentralSystemFrontend;
+import com.moms.app.grpc.observers.PhotoTakenObserver;
 import com.moms.app.grpc.observers.SearchItemObserver;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import pt.tecnico.moms.grpc.Communication;
 
 public class MyItemsActivity extends AppCompatActivity {
-    private List<Item> items = new ArrayList<>();
     private ListView listView;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,8 +43,12 @@ public class MyItemsActivity extends AppCompatActivity {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);//  set status text dark
         getWindow().setStatusBarColor(ContextCompat.getColor(MyItemsActivity.this,R.color.white));// set status background white
 
+        while(MainActivity.REQUEST_LOAD_ITEMS) {
+            ;
+        }
         listView = (ListView) findViewById(R.id.listview);
-        CentralSystemFrontend.FRONTEND.searchItem("", new SearchItemObserver(this));
+        ItemAdapter itemAdapter = new ItemAdapter(this, R.layout.list_row, new ArrayList(MainActivity.ITEMS.values()));
+        listView.setAdapter(itemAdapter);
 
         /*
         ListView listView = (ListView) findViewById(R.id.listview);
@@ -55,10 +67,10 @@ public class MyItemsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapter, View v, int position,
                                     long id) {
-                Item item = (Item) adapter.getItemAtPosition(position);
+                String idName = ((Item) adapter.getItemAtPosition(position)).getIdName();
                 Intent intent = new Intent(getApplicationContext(), ItemActivity.class);
-                intent.putExtra("item", item);
-                startActivity(intent);
+                intent.putExtra("item", idName);
+                startActivityForResult(intent, MainActivity.REQUEST_REMOVE);
             }
         });
 
@@ -72,26 +84,12 @@ public class MyItemsActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     *  Called when information about items is received after a search request is sent
-     * @param itemsList
-     *  A list containing information about all items that comply with the search parameters
-     */
-    public void searchedItems(List<Communication.ItemInformation> itemsList) {
-        //TODO
-        for (int i = 0; i < itemsList.size(); i++) {
-            String idName = itemsList.get(i).getItemId().getId();
-            byte[] imageBytes = itemsList.get(i).getImage().toByteArray();
-            Bitmap image = BitmapFactory.decodeByteArray(imageBytes , 0, imageBytes .length);
-            String name = itemsList.get(i).getName();
-            boolean lock = itemsList.get(i).getLocked();
-            boolean track = itemsList.get(i).getTracked();
-
-            items.add(new Item(name, image, track, lock, idName));
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == MainActivity.REQUEST_REMOVE && resultCode == MainActivity.RESULT_OK) {
+            ItemAdapter itemAdapter = new ItemAdapter(this, R.layout.list_row, new ArrayList(MainActivity.ITEMS.values()));
+            runOnUiThread(() -> listView.setAdapter(itemAdapter));
         }
-
-        ListView listView = (ListView) findViewById(R.id.listview);
-        ItemAdapter itemAdapter = new ItemAdapter(this, R.layout.list_row, items);
-        runOnUiThread(() -> listView.setAdapter(itemAdapter));
     }
 }

@@ -14,10 +14,18 @@ import android.widget.EditText;
 
 import com.moms.app.grpc.CentralSystemFrontend;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.JdkLoggerFactory;
 
 public class MainActivity extends AppCompatActivity {
+    public static HashMap<String, Item> ITEMS;
+    public static boolean REQUEST_LOAD_ITEMS = true;
+    public static int REQUEST_REMOVE = 0;
+    public static int RESULT_OK = 0;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override

@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,10 +25,11 @@ import java.util.List;
 import pt.tecnico.moms.grpc.Communication;
 
 public class ItemActivity extends AppCompatActivity {
+    private Switch track_switch;
+    private Switch lock_switch;
+    private Item item;
 
     // Private attributes
-
-    private Communication.ItemInformation itemInformation = null; //TODO must be set on onCreate
 
     // Other methods
 
@@ -41,8 +43,11 @@ public class ItemActivity extends AppCompatActivity {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);//  set status text dark
         getWindow().setStatusBarColor(ContextCompat.getColor(ItemActivity.this,R.color.white));// set status background white
 
-        Item item = getIntent().getParcelableExtra("item");
-        System.out.println(item.getName());
+        String idName = getIntent().getExtras().getString("item");
+        item = MainActivity.ITEMS.get(idName);
+
+        TextView textView = (TextView) findViewById(R.id.textView5);
+        textView.setText(item.getName());
 
         final Button back_button = findViewById(R.id.button11);
         back_button.setOnClickListener(new View.OnClickListener() {
@@ -60,7 +65,7 @@ public class ItemActivity extends AppCompatActivity {
                 // Code here executes on main thread after user presses button
                 //startActivity(new Intent(ItemActivity.this, AddItemActivity.class));
 
-                CentralSystemFrontend.FRONTEND.removeItem(itemInformation.getItemId().getId(), new RemoveItemObserver(ItemActivity.this));
+                CentralSystemFrontend.FRONTEND.removeItem(item.getIdName(), new RemoveItemObserver(ItemActivity.this));
             }
         });
 
@@ -71,11 +76,12 @@ public class ItemActivity extends AppCompatActivity {
                 // Code here executes on main thread after user presses button
                 //startActivity(new Intent(ItemActivity.this, AddItemActivity.class));
 
-                CentralSystemFrontend.FRONTEND.locateItem(itemInformation.getItemId().getId(), new LocateItemObserver(ItemActivity.this));
+                CentralSystemFrontend.FRONTEND.locateItem(item.getIdName(), new LocateItemObserver(ItemActivity.this));
             }
         });
 
-        final Switch lock_switch = findViewById(R.id.switch1);
+        lock_switch = findViewById(R.id.switch1);
+        lock_switch.setChecked(item.isLocked());
         lock_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
@@ -83,15 +89,16 @@ public class ItemActivity extends AppCompatActivity {
                 System.out.println("Lock is: " + isChecked);
 
                 if(isChecked) {
-                    CentralSystemFrontend.FRONTEND.lockItem(itemInformation.getItemId().getId(), new LockItemObserver());
+                    CentralSystemFrontend.FRONTEND.lockItem(item.getIdName(), new LockItemObserver(ItemActivity.this));
                 }
                 else {
-                    CentralSystemFrontend.FRONTEND.unlockItem(itemInformation.getItemId().getId(), new UnlockItemObserver());
+                    CentralSystemFrontend.FRONTEND.unlockItem(item.getIdName(), new UnlockItemObserver(ItemActivity.this));
                 }
             }
         });
 
-        final Switch track_switch = findViewById(R.id.switch2);
+        track_switch = findViewById(R.id.switch2);
+        track_switch.setChecked(item.isTracked());
         track_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
@@ -99,10 +106,10 @@ public class ItemActivity extends AppCompatActivity {
                 System.out.println("Track is: " + isChecked);
 
                 if(isChecked) {
-                    CentralSystemFrontend.FRONTEND.trackItem(itemInformation.getItemId().getId(), new TrackItemObserver());
+                    CentralSystemFrontend.FRONTEND.trackItem(item.getIdName(), new TrackItemObserver(ItemActivity.this));
                 }
                 else {
-                    CentralSystemFrontend.FRONTEND.untrackItem(itemInformation.getItemId().getId(), new UntrackItemObserver());
+                    CentralSystemFrontend.FRONTEND.untrackItem(item.getIdName(), new UntrackItemObserver(ItemActivity.this));
                 }
             }
         });
@@ -113,6 +120,9 @@ public class ItemActivity extends AppCompatActivity {
      */
     public void itemRemoved() {
         //TODO
+        MainActivity.ITEMS.remove(item.getIdName());
+        setResult(MainActivity.RESULT_OK);
+        finish();
     }
 
     /**
@@ -124,5 +134,15 @@ public class ItemActivity extends AppCompatActivity {
      */
     public void itemLocated(List<Communication.Footage> pictures, List<Communication.BoundingBox> boundingBoxes) {
         //TODO
+    }
+
+    public void setTrackSwitch(boolean track) {
+        runOnUiThread(() -> track_switch.setChecked(track));
+        item.setTrack(track);
+    }
+
+    public void setLockSwitch(boolean lock) {
+        runOnUiThread(() -> lock_switch.setChecked(lock));
+        item.setLock(lock);
     }
 }

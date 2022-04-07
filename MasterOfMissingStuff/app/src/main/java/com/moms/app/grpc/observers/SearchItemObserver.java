@@ -1,6 +1,7 @@
 package com.moms.app.grpc.observers;
 
 import com.moms.app.MyItemsActivity;
+import com.moms.app.SearchCompatible;
 
 import java.util.List;
 
@@ -11,11 +12,11 @@ public class SearchItemObserver implements StreamObserver<Communication.SearchRe
 
     // Private attributes
 
-    private final MyItemsActivity activity;
+    private final SearchCompatible activity;
 
     // Constructors
 
-    public SearchItemObserver(MyItemsActivity activity) {
+    public SearchItemObserver(SearchCompatible activity) {
         this.activity = activity;
     }
 

@@ -98,24 +98,31 @@ message StatusResponse {
     Status status = 10;
 }
 
+message KeepAliveResponse {
+    enum Status {
+        OK = 0;
+        SYSTEM_STOPPED_SENDING_STATUS_RESPONSES = 1;
+    }
+
+    Status status = 1;
+}
+
 service SmartphoneAppToCentralSystemService {
-
-    /* Called when the Smartphone App turns on, so that the Central System knows that it's on.
-        Returns an Ack.
-     */
-    rpc greet(Ack) returns (Ack);
-
-    /* Called when the Smartphone App turns off, so that the Central System knows that it's off
-        and stops sending Status Responses.
-        Returns an Ack.
-     */
-    rpc goodbye(Ack) returns (Ack);
 
     /* Called when the user has an item selected on the "find" menu and presses "locate".
         Returns video footage of the last seen location of the item (last 5 seconds), as well
         as the corresponding item's bounding box.
      */
     rpc locateItem(ItemId) returns (VideoFootage);
+
+    /* Called by the Smartphone App at least once every 10 seconds so that the Central System
+        knows that the Smartphone App is still on.
+        Returns OK if this function was called inside the time limit after the last function call.
+        Returns SYSTEM_STOPPED_SENDING_STATUS_RESPONSES if this function was called too long after the last
+        function call, which means that the Central System stopped sending Status Responses to the App, and the App
+        must call "statusRequest" again
+     */
+    rpc keepAlive(Ack) returns (KeepAliveResponse);
 
     /* Called when the user takes a photograph of an item that he wants to track.
         Returns a response saying if everything's OK or NO_ITEM_FOUND no item was identified in the picture or MULTIPLE_ITEMS_FOUND

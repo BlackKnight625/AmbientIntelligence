@@ -1,8 +1,7 @@
 package com.moms.app.grpc;
 
 import com.moms.app.grpc.observers.ConfirmItemInsertionObserver;
-import com.moms.app.grpc.observers.GoodbyeObserver;
-import com.moms.app.grpc.observers.GreetObserver;
+import com.moms.app.grpc.observers.KeepAliveObserver;
 import com.moms.app.grpc.observers.LocateItemObserver;
 import com.moms.app.grpc.observers.LockItemObserver;
 import com.moms.app.grpc.observers.PhotoTakenObserver;
@@ -52,30 +51,38 @@ public class CentralSystemFrontend {
                 // All future threads that want to use the stub may now do so
                 semaphore.release(Integer.MAX_VALUE);
 
-                greet();
                 statusRequest(); //Asking for status requests to be sent every second
+            }
+        }.start();
+
+        new Thread() {
+            @Override
+            public void run() {
+                while(true) {
+                    keepAlive();
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }.start();
     }
 
     // Service methods
 
-    private void greet() {
-        waitForLoadedStub();
-
-        stub.greet(Communication.Ack.newBuilder().build(), new GreetObserver());
-    }
-
-    private void statusRequest() {
+    public void statusRequest() {
         waitForLoadedStub();
 
         stub.statusRequest(Communication.StatusRequest.newBuilder().build(), new StatusResponseObserver());
     }
 
-    public void goodbye() {
+    private void keepAlive() {
         waitForLoadedStub();
 
-        stub.goodbye(Communication.Ack.newBuilder().build(), new GoodbyeObserver());
+        stub.keepAlive(Communication.Ack.newBuilder().build(), new KeepAliveObserver());
     }
 
     public void locateItem(String id, LocateItemObserver footageReceivedObserver) {
@@ -169,6 +176,8 @@ public class CentralSystemFrontend {
             semaphore.acquire();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } finally {
+            semaphore.release();
         }
     }
 

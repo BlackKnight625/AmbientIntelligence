@@ -29,6 +29,8 @@ lastFootageReceivedTime = time.time()
 lastFootageReceivedTimeout = 10
 
 smartphoneAppConnected = False
+lastKeepaliveReceivedTime = -1
+lastKeepaliveReceivedTimeout = 10
 
 # Service implementations
 classNames = []
@@ -125,15 +127,20 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
     def __init__(self, *args, **kwargs):
         self.lastPhotoTaken = None
 
-    def greet(self, request, context):
+    def keepAlive(self, request, context):
+        global smartphoneAppConnected, lastKeepaliveReceivedTime
+
+        keepaliveResponse = pb2.KeepAliveResponse()
+
+        if smartphoneAppConnected:
+            keepaliveResponse.status = pb2.KeepAliveResponse.OK
+        else:
+            keepaliveResponse.status = pb2.KeepAliveResponse.SYSTEM_STOPPED_SENDING_STATUS_RESPONSES
+
         smartphoneAppConnected = True
+        lastKeepaliveReceivedTime = time.time()
 
-        return pb2.Ack()
-
-    def goodbye(self, request, context):
-        smartphoneAppConnected = False
-
-        return pb2.Ack()
+        return keepaliveResponse
 
     def locateItem(self, itemId, context):  # Returns VideoFootage
         id = itemId.id
@@ -260,6 +267,7 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
         return pb2.Ack()
 
     def statusRequest(self, request, context):
+        global smartphoneAppConnected
         while smartphoneAppConnected:
             response = pb2.StatusResponse()
 
@@ -301,6 +309,14 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
                     response.ok.CopyFrom(pb2.Ack())
 
             yield response
+
+            # Checking if the Smartphone App is still alive
+
+            if lastKeepaliveReceivedTime != -1 and \
+                    (time.time() - lastKeepaliveReceivedTime) > lastFootageReceivedTimeout:
+                smartphoneAppConnected = False
+                continue
+
             time.sleep(1)  # Sleeping for 1 second so that status responses are sent every second
 
 

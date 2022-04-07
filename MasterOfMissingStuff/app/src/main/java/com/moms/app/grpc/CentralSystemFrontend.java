@@ -37,9 +37,13 @@ public class CentralSystemFrontend {
     // Constructors
 
     public CentralSystemFrontend(String ip, String port) throws NumberFormatException {
-        channel = ManagedChannelBuilder.forAddress(ip, Integer.parseInt(port)).usePlaintext().build();
+        try {
+            channel = ManagedChannelBuilder.forAddress(ip, Integer.parseInt(port)).usePlaintext().build();
 
-        stub = SmartphoneAppToCentralSystemServiceGrpc.newStub(channel);
+            stub = SmartphoneAppToCentralSystemServiceGrpc.newStub(channel);
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("Given port (" + port + ") is not a valid por number.");
+        }
     }
 
     // Service methods

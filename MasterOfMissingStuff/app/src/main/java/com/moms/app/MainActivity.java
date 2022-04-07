@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.moms.app.grpc.CentralSystemFrontend;
 import com.moms.app.grpc.observers.GreetObserver;
@@ -69,5 +70,10 @@ public class MainActivity extends AppCompatActivity {
      */
     public void greetingError(Throwable error) {
         //TODO: Show the user what went wrong
+        runOnUiThread(() -> {
+            TextView errorTextView = findViewById(R.id.errorTextView);
+
+            errorTextView.setText(error.getMessage());
+        });
     }
 }

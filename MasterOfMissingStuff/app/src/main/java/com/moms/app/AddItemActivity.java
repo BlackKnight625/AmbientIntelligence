@@ -105,13 +105,18 @@ public class AddItemActivity extends AppCompatActivity {
 
         switch (status) {
             case OK:
-                //TODO: Show the user the identified item's category
+                //TODO: Show the user the identified item's category so he may then confirm the item's insertion
                 break;
             case NO_ITEM_FOUND:
+                MainActivity.showPopupWindow(this, "No item was found in the provided picture. Try a different angle.");
                 break;
             case ITEM_ALREADY_EXISTS:
+                MainActivity.showPopupWindow(this, "Item of type (" + newItemId + ") already exists. You may modify/remove it in the " +
+                        "'Search Item' menu.");
                 break;
             case MULTIPLE_ITEMS_FOUND:
+                MainActivity.showPopupWindow(this, "Multiple items were found in the picture. Make sure there are no other items near the " +
+                        "item you're trying to take a picture of. For better results, place the desired item on a uniformly colored surface.");
                 break;
         }
     }

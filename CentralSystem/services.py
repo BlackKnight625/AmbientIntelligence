@@ -28,6 +28,8 @@ lastFootageReceivedTimeLock = RWLock()
 lastFootageReceivedTime = time.time()
 lastFootageReceivedTimeout = 10
 
+smartphoneAppConnected = False
+
 # Service implementations
 classNames = []
 classFile = "../archive/coco.names"
@@ -81,7 +83,7 @@ class CameraToCentralSystemService(pb2_grpc.CameraToCentralSystemServiceServicer
                     # The item seen is locked. Checking if it moved
                     lastSeenFootage = footageStorage.getLastSeenFootageAndInformation(item)
 
-                    if lastSeenFootage != None:
+                    if lastSeenFootage is not None:
                         # This item has been seen before
                         lastBoundingBox = lastSeenFootage[
                             -1].boundingBox  # Fetching the BB from when the item was last seen
@@ -89,7 +91,7 @@ class CameraToCentralSystemService(pb2_grpc.CameraToCentralSystemServiceServicer
                         if (boundingBox != lastBoundingBox).any():
                             # Bounding box has moved, therefore, the item moved
                             lockedItemsMovedLock.w_acquire()
-                            lockedItemsMoved.add(item)
+                            lockedItemsMoved.add(items_storage.getName(item))
                             lockedItemsMovedLock.w_release()
 
                 footageLock.w_acquire()
@@ -122,6 +124,16 @@ class CameraToCentralSystemService(pb2_grpc.CameraToCentralSystemServiceServicer
 class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemServiceServicer):
     def __init__(self, *args, **kwargs):
         self.lastPhotoTaken = None
+
+    def greet(self, request, context):
+        smartphoneAppConnected = True
+
+        return pb2.Ack()
+
+    def goodbye(self, request, context):
+        smartphoneAppConnected = False
+
+        return pb2.Ack()
 
     def locateItem(self, itemId, context):  # Returns VideoFootage
         id = itemId.id
@@ -248,54 +260,48 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
         return pb2.Ack()
 
     def statusRequest(self, request, context):
-        response = pb2.StatusResponse()
+        while smartphoneAppConnected:
+            response = pb2.StatusResponse()
 
-        lockedItemsMovedLock.r_acquire()
+            lockedItemsMovedLock.r_acquire()
 
-        if len(lockedItemsMoved) != 0:
-            # Locked items have been moved
+            if len(lockedItemsMoved) != 0:
+                # Locked items have been moved
 
-            itemIdList = pb2.ItemIdList()
+                itemNameList = pb2.ItemNameList()
 
-            itemIds = []
+                itemNameList.itemNames.extend(lockedItemsMoved)
 
-            # Creating ItemId grpc objects for every item string present
-            for item in lockedItemsMoved:
-                itemId = pb2.ItemId()
-                itemId.id = item
-                itemIds.append(itemId)
+                lockedItemsMovedLock.r_release()
 
-            itemIdList.items.extend(itemIds)
+                # Clearing all items off the list
+                lockedItemsMovedLock.w_acquire()
+                lockedItemsMoved.clear()
+                lockedItemsMovedLock.w_release()
 
-            lockedItemsMovedLock.r_release()
-
-            # Clearing all items off the list
-            lockedItemsMovedLock.w_acquire()
-            lockedItemsMoved.clear()
-            lockedItemsMovedLock.w_release()
-
-            response.status = pb2.StatusResponse.LOCKED_ITEMS_MOVED
-            response.movedLockedItems.CopyFrom(itemIdList)
-        else:
-            lockedItemsMovedLock.r_release()
-
-            # No locked items have moved. Checking last time footage was received
-
-            lastFootageReceivedTimeLock.r_acquire()
-            timeDifference = time.time() - lastFootageReceivedTime
-            lastFootageReceivedTimeLock.r_release()
-
-            if timeDifference >= lastFootageReceivedTimeout:
-                # Camera hasn't sent footage in a long time
-
-                response.status = pb2.StatusResponse.CAMERA_TURNED_OFF
-                response.offCameraInfo = "Surveillance Camera has been offline for " + str(timeDifference)
+                response.status = pb2.StatusResponse.LOCKED_ITEMS_MOVED
+                response.movedLockedItems.CopyFrom(itemNameList)
             else:
-                # There's nothing wrong
-                response.status = pb2.StatusResponse.OK
-                response.ok.CopyFrom(pb2.Ack())
+                lockedItemsMovedLock.r_release()
 
-        return response
+                # No locked items have moved. Checking last time footage was received
+
+                lastFootageReceivedTimeLock.r_acquire()
+                timeDifference = time.time() - lastFootageReceivedTime
+                lastFootageReceivedTimeLock.r_release()
+
+                if timeDifference >= lastFootageReceivedTimeout:
+                    # Camera hasn't sent footage in a long time
+
+                    response.status = pb2.StatusResponse.CAMERA_TURNED_OFF
+                    response.offCameraInfo = "Surveillance Camera has been offline for " + str(timeDifference)
+                else:
+                    # There's nothing wrong
+                    response.status = pb2.StatusResponse.OK
+                    response.ok.CopyFrom(pb2.Ack())
+
+            yield response
+            time.sleep(1)  # Sleeping for 1 second so that status responses are sent every second
 
 
 def getGrpcBoundingBoxFromCv2(cvsBoundingBox):

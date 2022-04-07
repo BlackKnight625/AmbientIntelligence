@@ -78,8 +78,8 @@ message Ack {}
 
 message StatusRequest {}
 
-message ItemIdList {
-    repeated ItemId items = 1;
+message ItemNameList {
+    repeated string itemNames = 1;
 }
 
 message StatusResponse {
@@ -91,7 +91,7 @@ message StatusResponse {
 
     oneof StatusInformation {
         Ack ok = 1;
-        ItemIdList movedLockedItems = 2; //proto doesn't let me put "repeat" here, so a new message was created
+        ItemNameList movedLockedItems = 2; //proto doesn't let me put "repeat" here, so a new message was created
         string offCameraInfo = 3;
     }
 
@@ -99,6 +99,18 @@ message StatusResponse {
 }
 
 service SmartphoneAppToCentralSystemService {
+
+    /* Called when the Smartphone App turns on, so that the Central System knows that it's on.
+        Returns an Ack.
+     */
+    rpc greet(Ack) returns (Ack);
+
+    /* Called when the Smartphone App turns off, so that the Central System knows that it's off
+        and stops sending Status Responses.
+        Returns an Ack.
+     */
+    rpc goodbye(Ack) returns (Ack);
+
     /* Called when the user has an item selected on the "find" menu and presses "locate".
         Returns video footage of the last seen location of the item (last 5 seconds), as well
         as the corresponding item's bounding box.
@@ -154,10 +166,10 @@ service SmartphoneAppToCentralSystemService {
      */
     rpc removeItem(ItemId) returns (Ack);
 
-    /* Called every so often by the SmartPhone App to request the Central System's status.
+    /* Called once by the SmartPhone App to request the Central System's status every so often.
         Returns Status 'OK' if everything's fine, or
         returns 'LOCKED_ITEMS_MOVED' if at least 1 locked item was detected moving and a list containing the moved item IDs, or
         returns 'CAMERA_TURNED_OFF' if a camera turned off (briefly or permanently) and a string containing a message saying what happened.
      */
-    rpc statusRequest(StatusRequest) returns (StatusResponse);
+    rpc statusRequest(StatusRequest) returns (stream StatusResponse);
 }

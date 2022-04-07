@@ -130,6 +130,10 @@ class ImageStorageTests(unittest.TestCase):
 
 
 class ServiceTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        services.smartphoneAppConnected = True
+
     def setUp(self):
         self.cameraService = services.CameraToCentralSystemService()
         self.smartphoneService = services.SmartphoneAppToCentralSystemService()
@@ -331,7 +335,7 @@ class ServiceTests(unittest.TestCase):
         self.assertEqual(len(searchResponse.searchResults), 2)
 
     def test_statusRequestOK(self):
-        statusResponse = self.smartphoneService.statusRequest(pb2.StatusRequest(), None)
+        statusResponse = next(self.smartphoneService.statusRequest(pb2.StatusRequest(), None))
 
         self.assertEqual(statusResponse.status, pb2.StatusResponse.OK)
         self.assertTrue(statusResponse.HasField("ok"))
@@ -339,7 +343,7 @@ class ServiceTests(unittest.TestCase):
     def test_statusRequestCameraOff(self):
         services.lastFootageReceivedTime -= (services.lastFootageReceivedTimeout + 1)
 
-        statusResponse = self.smartphoneService.statusRequest(pb2.StatusRequest(), None)
+        statusResponse = next(self.smartphoneService.statusRequest(pb2.StatusRequest(), None))
 
         self.assertEqual(statusResponse.status, pb2.StatusResponse.CAMERA_TURNED_OFF)
         self.assertTrue(statusResponse.HasField("offCameraInfo"))
@@ -353,18 +357,18 @@ class ServiceTests(unittest.TestCase):
 
         timestamp2.seconds += 1
 
-        self.insertItem(itemId.id, True, True)  # Inserting locked item
+        self.insertItem(itemId.id, True, True, name = itemId.id)  # Inserting locked item
         self.insertPicture(singlePersonFilename, timestamp1)
         self.insertPicture(testPictureFilename3, timestamp2)
 
         self.assertEqual(len(services.lockedItemsMoved), 1)
 
-        statusResponse = self.smartphoneService.statusRequest(pb2.StatusRequest(), None)
+        statusResponse = next(self.smartphoneService.statusRequest(pb2.StatusRequest(), None))
 
         self.assertEqual(statusResponse.status, pb2.StatusResponse.LOCKED_ITEMS_MOVED)
         self.assertTrue(statusResponse.HasField("movedLockedItems"))
-        self.assertEqual(len(statusResponse.movedLockedItems.items), 1)
-        self.assertEqual(statusResponse.movedLockedItems.items[0].id, itemId.id)
+        self.assertEqual(len(statusResponse.movedLockedItems.itemNames), 1)
+        self.assertEqual(statusResponse.movedLockedItems.itemNames[0], itemId.id)
 
     def test_photoTakenAndConfirmInsertion(self):
         footage = pb2.Footage()

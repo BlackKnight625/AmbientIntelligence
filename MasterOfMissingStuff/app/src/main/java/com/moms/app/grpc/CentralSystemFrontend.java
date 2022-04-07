@@ -1,11 +1,14 @@
 package com.moms.app.grpc;
 
 import com.moms.app.grpc.observers.ConfirmItemInsertionObserver;
+import com.moms.app.grpc.observers.GoodbyeObserver;
+import com.moms.app.grpc.observers.GreetObserver;
 import com.moms.app.grpc.observers.LocateItemObserver;
 import com.moms.app.grpc.observers.LockItemObserver;
 import com.moms.app.grpc.observers.PhotoTakenObserver;
 import com.moms.app.grpc.observers.RemoveItemObserver;
 import com.moms.app.grpc.observers.SearchItemObserver;
+import com.moms.app.grpc.observers.StatusResponseObserver;
 import com.moms.app.grpc.observers.TrackItemObserver;
 import com.moms.app.grpc.observers.UnlockItemObserver;
 import com.moms.app.grpc.observers.UntrackItemObserver;
@@ -48,11 +51,32 @@ public class CentralSystemFrontend {
 
                 // All future threads that want to use the stub may now do so
                 semaphore.release(Integer.MAX_VALUE);
+
+                greet();
+                statusRequest(); //Asking for status requests to be sent every second
             }
         }.start();
     }
 
     // Service methods
+
+    private void greet() {
+        waitForLoadedStub();
+
+        stub.greet(Communication.Ack.newBuilder().build(), new GreetObserver());
+    }
+
+    private void statusRequest() {
+        waitForLoadedStub();
+
+        stub.statusRequest(Communication.StatusRequest.newBuilder().build(), new StatusResponseObserver());
+    }
+
+    public void goodbye() {
+        waitForLoadedStub();
+
+        stub.goodbye(Communication.Ack.newBuilder().build(), new GoodbyeObserver());
+    }
 
     public void locateItem(String id, LocateItemObserver footageReceivedObserver) {
         waitForLoadedStub();

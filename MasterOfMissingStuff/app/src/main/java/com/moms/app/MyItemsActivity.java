@@ -3,6 +3,7 @@ package com.moms.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -12,6 +13,8 @@ import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import pt.tecnico.moms.grpc.Communication;
 
 public class MyItemsActivity extends AppCompatActivity {
 
@@ -33,6 +36,19 @@ public class MyItemsActivity extends AppCompatActivity {
 
         ItemAdapter itemAdapter = new ItemAdapter(this, R.layout.list_row, items);
         listView.setAdapter(itemAdapter);
+        //listView.setDivider(null);
+        //listView.setDividerHeight(0);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View v, int position,
+                                    long id) {
+                Item item = (Item) adapter.getItemAtPosition(position);
+                Intent intent = new Intent(getApplicationContext(), ItemActivity.class);
+                intent.putExtra("item", item);
+                startActivity(intent);
+            }
+        });
 
         final Button back_button = findViewById(R.id.button9);
         back_button.setOnClickListener(new View.OnClickListener() {
@@ -42,5 +58,14 @@ public class MyItemsActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    /**
+     *  Called when information about items is received after a search request is sent
+     * @param itemInformations
+     *  A list containing information about all items that comply with the search parameters
+     */
+    public void searchedItems(List<Communication.ItemInformation> itemInformations) {
+        //TODO
     }
 }

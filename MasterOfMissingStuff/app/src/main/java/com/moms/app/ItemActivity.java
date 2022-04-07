@@ -1,6 +1,5 @@
 package com.moms.app;
 
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -13,11 +12,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.moms.app.grpc.CentralSystemFrontend;
+import com.moms.app.grpc.observers.LocateItemObserver;
 import com.moms.app.grpc.observers.LockItemObserver;
 import com.moms.app.grpc.observers.RemoveItemObserver;
 import com.moms.app.grpc.observers.TrackItemObserver;
 import com.moms.app.grpc.observers.UnlockItemObserver;
 import com.moms.app.grpc.observers.UntrackItemObserver;
+
+import java.util.List;
 
 import pt.tecnico.moms.grpc.Communication;
 
@@ -39,6 +41,9 @@ public class ItemActivity extends AppCompatActivity {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);//  set status text dark
         getWindow().setStatusBarColor(ContextCompat.getColor(ItemActivity.this,R.color.white));// set status background white
 
+        Item item = getIntent().getParcelableExtra("item");
+        System.out.println(item.getName());
+
         final Button back_button = findViewById(R.id.button11);
         back_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,7 +60,7 @@ public class ItemActivity extends AppCompatActivity {
                 // Code here executes on main thread after user presses button
                 //startActivity(new Intent(ItemActivity.this, AddItemActivity.class));
 
-                CentralSystemFrontend.FRONTEND.removeItem(itemInformation.getItemId().getId(), new RemoveItemObserver());
+                CentralSystemFrontend.FRONTEND.removeItem(itemInformation.getItemId().getId(), new RemoveItemObserver(ItemActivity.this));
             }
         });
 
@@ -65,6 +70,8 @@ public class ItemActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // Code here executes on main thread after user presses button
                 //startActivity(new Intent(ItemActivity.this, AddItemActivity.class));
+
+                CentralSystemFrontend.FRONTEND.locateItem(itemInformation.getItemId().getId(), new LocateItemObserver(ItemActivity.this));
             }
         });
 
@@ -99,5 +106,23 @@ public class ItemActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    /**
+     * Called when an Ack is received after removing an item
+     */
+    public void itemRemoved() {
+        //TODO
+    }
+
+    /**
+     *  Called when footage and bounding boxes are received after locating an item
+     * @param pictures
+     *  List of pictures corresponding to the last 5 seconds of when the item was last seen
+     * @param boundingBoxes
+     *  List of Bounding boxes associated with each picture that show where the item is
+     */
+    public void itemLocated(List<Communication.Footage> pictures, List<Communication.BoundingBox> boundingBoxes) {
+        //TODO
     }
 }

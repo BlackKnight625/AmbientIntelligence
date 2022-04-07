@@ -62,6 +62,9 @@ class ItemsStorage:
             res.append(item)
         return res
 
+    def getName(self, itemId):
+        return self.dic[itemId][name]
+
     def has_item(self, itemId):
         return itemId in self.dic
 

@@ -1,11 +1,13 @@
 package com.moms.app.grpc;
 
 import com.moms.app.grpc.observers.ConfirmItemInsertionObserver;
+import com.moms.app.grpc.observers.KeepAliveObserver;
 import com.moms.app.grpc.observers.LocateItemObserver;
 import com.moms.app.grpc.observers.LockItemObserver;
 import com.moms.app.grpc.observers.PhotoTakenObserver;
 import com.moms.app.grpc.observers.RemoveItemObserver;
 import com.moms.app.grpc.observers.SearchItemObserver;
+import com.moms.app.grpc.observers.StatusResponseObserver;
 import com.moms.app.grpc.observers.TrackItemObserver;
 import com.moms.app.grpc.observers.UnlockItemObserver;
 import com.moms.app.grpc.observers.UntrackItemObserver;
@@ -48,11 +50,40 @@ public class CentralSystemFrontend {
 
                 // All future threads that want to use the stub may now do so
                 semaphore.release(Integer.MAX_VALUE);
+
+                statusRequest(); //Asking for status requests to be sent every second
+            }
+        }.start();
+
+        new Thread() {
+            @Override
+            public void run() {
+                while(true) {
+                    keepAlive();
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }.start();
     }
 
     // Service methods
+
+    public void statusRequest() {
+        waitForLoadedStub();
+
+        stub.statusRequest(Communication.StatusRequest.newBuilder().build(), new StatusResponseObserver());
+    }
+
+    private void keepAlive() {
+        waitForLoadedStub();
+
+        stub.keepAlive(Communication.Ack.newBuilder().build(), new KeepAliveObserver());
+    }
 
     public void locateItem(String id, LocateItemObserver footageReceivedObserver) {
         waitForLoadedStub();
@@ -145,6 +176,8 @@ public class CentralSystemFrontend {
             semaphore.acquire();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } finally {
+            semaphore.release();
         }
     }
 

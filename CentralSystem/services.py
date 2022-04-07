@@ -127,6 +127,9 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
     def __init__(self, *args, **kwargs):
         self.lastPhotoTaken = None
 
+    def greet(self, request, context):
+        return pb2.Ack()
+
     def keepAlive(self, request, context):
         global smartphoneAppConnected, lastKeepaliveReceivedTime
 
@@ -268,9 +271,9 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
         return pb2.Ack()
 
     def statusRequest(self, request, context):
-        print("Satusing")
-        global smartphoneAppConnected
+        global smartphoneAppConnected, lastKeepaliveReceivedTime
         while smartphoneAppConnected:
+            print("Satusing")
             response = pb2.StatusResponse()
 
             lockedItemsMovedLock.r_acquire()
@@ -317,6 +320,7 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
             if lastKeepaliveReceivedTime != -1 and \
                     (time.time() - lastKeepaliveReceivedTime) > lastFootageReceivedTimeout:
                 smartphoneAppConnected = False
+                lastKeepaliveReceivedTime = -1
                 continue
 
             time.sleep(1)  # Sleeping for 1 second so that status responses are sent every second

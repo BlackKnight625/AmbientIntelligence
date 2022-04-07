@@ -36,7 +36,7 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         ImageView imageView = convertView.findViewById(R.id.imageView10);
         TextView txtView = convertView.findViewById(R.id.textView7);
 
-        //imageView.setImageBitmap(getItem(position).getImage());
+        imageView.setImageBitmap(getItem(position).getImage());
         txtView.setText(getItem(position).getName());
 
         return convertView;

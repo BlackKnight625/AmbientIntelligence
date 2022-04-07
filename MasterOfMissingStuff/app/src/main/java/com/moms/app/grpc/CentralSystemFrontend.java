@@ -44,6 +44,7 @@ public class CentralSystemFrontend {
                     channel = ManagedChannelBuilder.forAddress(ip, Integer.parseInt(port)).usePlaintext().build();
 
                     stub = SmartphoneAppToCentralSystemServiceGrpc.newStub(channel);
+                    System.out.println("Communication between Central System and Smartphone App established!");
                 } catch (NumberFormatException e) {
                     System.err.println("Provided port is not an integer: " + port + ". " + e.getMessage());
                 }
@@ -59,9 +60,8 @@ public class CentralSystemFrontend {
             @Override
             public void run() {
                 while(true) {
-                    keepAlive();
-
                     try {
+                        keepAlive();
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();

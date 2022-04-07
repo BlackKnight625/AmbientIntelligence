@@ -203,6 +203,7 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
         return pb2.Ack()
 
     def searchItem(self, searchParameters, context):  # Returns SearchResponse
+        print("Searching")
         searchResponse = pb2.SearchResponse()
         itemInformations = []
 
@@ -267,6 +268,7 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
         return pb2.Ack()
 
     def statusRequest(self, request, context):
+        print("Satusing")
         global smartphoneAppConnected
         while smartphoneAppConnected:
             response = pb2.StatusResponse()

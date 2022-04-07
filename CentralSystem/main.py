@@ -13,8 +13,9 @@ import services
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    pb2_grpc.add_SmartphoneAppToCentralSystemServiceServicer_to_server(services.SmartphoneAppToCentralSystemService(),
+                                                                       server)
     pb2_grpc.add_CameraToCentralSystemServiceServicer_to_server(services.CameraToCentralSystemService(), server)
-    pb2_grpc.add_SmartphoneAppToCentralSystemServiceServicer_to_server(services.SmartphoneAppToCentralSystemService(), server)
     server.add_insecure_port('[::]:50051')
     server.start()
     server.wait_for_termination()

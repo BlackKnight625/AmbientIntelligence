@@ -463,7 +463,7 @@ def get_images():
     images = []
     for img in image_names:
         file = open(images_folder + img, "rb")
-        images.append(file.read())
+        images.append(imageProcessing.getImageFromBytes(file.read()))
         file.close()
     return images
 

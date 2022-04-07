@@ -14,6 +14,9 @@ import android.widget.EditText;
 
 import com.moms.app.grpc.CentralSystemFrontend;
 
+import io.netty.util.internal.logging.InternalLoggerFactory;
+import io.netty.util.internal.logging.JdkLoggerFactory;
+
 public class MainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -21,6 +24,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.insertip);
+
+        //This is a dark magic line that makes some things not explode, for some reason
+        InternalLoggerFactory.setDefaultFactory(JdkLoggerFactory.INSTANCE);
 
         getSupportActionBar().hide();
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);//  set status text dark

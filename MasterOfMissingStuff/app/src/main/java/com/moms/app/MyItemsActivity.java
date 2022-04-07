@@ -92,6 +92,6 @@ public class MyItemsActivity extends AppCompatActivity {
 
         ListView listView = (ListView) findViewById(R.id.listview);
         ItemAdapter itemAdapter = new ItemAdapter(this, R.layout.list_row, items);
-        listView.setAdapter(itemAdapter);
+        runOnUiThread(() -> listView.setAdapter(itemAdapter));
     }
 }

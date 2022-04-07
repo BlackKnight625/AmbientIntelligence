@@ -51,7 +51,7 @@
         android:layout_marginBottom="38dp"
         android:background="#8A6262"
         android:fontFamily="sans-serif-light"
-        android:text="@string/locate_item"
+        android:text="Locate item"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textSize="14sp"

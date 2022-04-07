@@ -2,8 +2,12 @@ package com.moms.app;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,11 +24,17 @@ import io.netty.util.internal.logging.JdkLoggerFactory;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static MainActivity MAIN_ACTIVITY;
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.insertip);
+
+        createNotificationChannel();
+
+        MAIN_ACTIVITY = this;
 
         //This is a dark magic line that makes some things not explode, for some reason
         InternalLoggerFactory.setDefaultFactory(JdkLoggerFactory.INSTANCE);
@@ -52,6 +62,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        //Testing notifications
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                sendNotification("Hello there!", "General Kenobi");
+            }
+        }.start();
     }
 
     /**
@@ -69,11 +92,43 @@ public class MainActivity extends AppCompatActivity {
      *  The error that prevented a connection from being established
      */
     public void greetingError(Throwable error) {
-        //TODO: Show the user what went wrong
         runOnUiThread(() -> {
             TextView errorTextView = findViewById(R.id.errorTextView);
 
             errorTextView.setText(error.getMessage());
+        });
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Notifications";
+            String description = "For this Apps notifications";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("Channel", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    private static int i = 0;
+    public static void sendNotification(String title, String text) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.MAIN_ACTIVITY.getApplicationContext(),
+                "Channel")
+                .setContentTitle(title)
+                .setContentText(text)
+                .setSmallIcon(R.drawable.exclamation)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        MAIN_ACTIVITY.runOnUiThread(() -> {
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(
+                    MAIN_ACTIVITY.getApplicationContext());
+
+            notificationManager.notify(i++, builder.build());
         });
     }
 }

@@ -31,12 +31,12 @@
 
     <Button
         android:id="@+id/button7"
-        android:layout_width="195"
-        android:layout_height="52"
+        android:layout_width="195dp"
+        android:layout_height="52dp"
         android:layout_marginBottom="44dp"
         android:background="#8A6262"
         android:fontFamily="sans-serif-light"
-        android:text="Save"
+        android:text="@string/save"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textSize="14sp"
@@ -53,8 +53,8 @@
 
     <Button
         android:id="@+id/button5"
-        android:layout_width="195"
-        android:layout_height="52"
+        android:layout_width="195dp"
+        android:layout_height="52dp"
         android:layout_marginBottom="14dp"
         android:background="#8A6262"
         android:fontFamily="sans-serif-light"

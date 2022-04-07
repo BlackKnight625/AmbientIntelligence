@@ -8,4 +8,5 @@
     <string name="insert_name">Insert name</string>
     <string name="item_name">Item name</string>
     <string name="item_image">item_image</string>
+    <string name="save">Save</string>
 </resources>

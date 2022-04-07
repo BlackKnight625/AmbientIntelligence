@@ -35,13 +35,22 @@ public class AddItemActivity extends AppCompatActivity {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);//  set status text dark
         getWindow().setStatusBarColor(ContextCompat.getColor(AddItemActivity.this,R.color.white));// set status background white
 
-        final Button add_picture_button = findViewById(R.id.button7);
+        final Button add_picture_button = findViewById(R.id.button5);
         add_picture_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Code here executes on main thread after user presses button
                 //startActivity(new Intent(getApplicationContext(), ItemActivity.class));
                 dispatchTakePictureIntent();
+            }
+        });
+
+        final Button save_button = findViewById(R.id.button7);
+        save_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Code here executes on main thread after user presses button
+                //startActivity(new Intent(getApplicationContext(), ItemActivity.class));
             }
         });
 

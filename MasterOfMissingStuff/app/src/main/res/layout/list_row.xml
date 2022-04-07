@@ -15,7 +15,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="62dp"
         android:layout_marginLeft="62dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="0dp"
         android:contentDescription="@string/item_image"
         app:srcCompat="@drawable/placeholder"
         tools:ignore="ImageContrastCheck" />
@@ -30,7 +30,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginStart="200dp"
         android:layout_marginLeft="200dp"
-        android:layout_marginTop="47dp"
+        android:layout_marginTop="35dp"
         android:layout_marginRight="114dp"
         android:layout_toRightOf="@id/imageView10"
         android:fontFamily="sans-serif-light"

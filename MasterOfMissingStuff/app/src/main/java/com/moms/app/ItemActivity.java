@@ -39,6 +39,9 @@ public class ItemActivity extends AppCompatActivity {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);//  set status text dark
         getWindow().setStatusBarColor(ContextCompat.getColor(ItemActivity.this,R.color.white));// set status background white
 
+        Item item = getIntent().getParcelableExtra("item");
+        System.out.println(item.getName());
+
         final Button back_button = findViewById(R.id.button11);
         back_button.setOnClickListener(new View.OnClickListener() {
             @Override

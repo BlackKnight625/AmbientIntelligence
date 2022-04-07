@@ -4,7 +4,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.moms.app.grpc.CentralSystemFrontend;
+import com.moms.app.grpc.observers.GreetObserver;
 
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.JdkLoggerFactory;
@@ -39,9 +39,31 @@ public class MainActivity extends AppCompatActivity {
                 // Code here executes on main thread after user presses button
                 final EditText ip_text =  (EditText) findViewById(R.id.editTextTextPersonName2);
                 final EditText port_text = (EditText) findViewById(R.id.editTextTextPersonName3);
-                CentralSystemFrontend.FRONTEND = new CentralSystemFrontend(ip_text.getText().toString(), port_text.getText().toString());
-                startActivity(new Intent(getApplicationContext(), AddSearchActivity.class));
+
+                GreetObserver observer = new GreetObserver(MainActivity.this);
+
+                CentralSystemFrontend.FRONTEND = new CentralSystemFrontend(ip_text.getText().toString(), port_text.getText().toString(), observer);
+
+                CentralSystemFrontend.FRONTEND.greet(observer);
             }
         });
+    }
+
+    /**
+     *  Called when the greeting from this App receives a greeting response, meaning
+     * that the connection with the Central System was established with success.
+     */
+    public void greetingReceived() {
+        startActivity(new Intent(getApplicationContext(), AddSearchActivity.class));
+    }
+
+    /**
+     *  Called when the greeting from this App returns with an error, meaning
+     * something went wrong while trying to connect to the Central System
+     * @param error
+     *  The error that prevented a connection from being established
+     */
+    public void greetingError(Throwable error) {
+        //TODO: Show the user what went wrong
     }
 }

@@ -109,6 +109,11 @@ message KeepAliveResponse {
 
 service SmartphoneAppToCentralSystemService {
 
+    /* Called right after the user inserted the IP and Port of the Central System.
+        Returns an Ack, which means that the connection was successfully acquired.
+     */
+    rpc greet(Ack) returns (Ack);
+
     /* Called when the user has an item selected on the "find" menu and presses "locate".
         Returns video footage of the last seen location of the item (last 5 seconds), as well
         as the corresponding item's bounding box.

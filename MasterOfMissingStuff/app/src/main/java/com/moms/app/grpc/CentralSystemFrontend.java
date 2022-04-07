@@ -1,6 +1,7 @@
 package com.moms.app.grpc;
 
 import com.moms.app.grpc.observers.ConfirmItemInsertionObserver;
+import com.moms.app.grpc.observers.GreetObserver;
 import com.moms.app.grpc.observers.KeepAliveObserver;
 import com.moms.app.grpc.observers.LocateItemObserver;
 import com.moms.app.grpc.observers.LockItemObserver;
@@ -36,7 +37,7 @@ public class CentralSystemFrontend {
 
     // Constructors
 
-    public CentralSystemFrontend(String ip, String port) {
+    public CentralSystemFrontend(String ip, String port, GreetObserver greetObserver) {
         new Thread() {
             @Override
             public void run() {
@@ -46,7 +47,8 @@ public class CentralSystemFrontend {
                     stub = SmartphoneAppToCentralSystemServiceGrpc.newStub(channel);
                     System.out.println("Communication between Central System and Smartphone App established!");
                 } catch (NumberFormatException e) {
-                    System.err.println("Provided port is not an integer: " + port + ". " + e.getMessage());
+                    greetObserver.onError(e);
+                    return;
                 }
 
                 // All future threads that want to use the stub may now do so
@@ -72,6 +74,12 @@ public class CentralSystemFrontend {
     }
 
     // Service methods
+
+    public void greet(GreetObserver observer) {
+        waitForLoadedStub();
+
+        stub.greet(Communication.Ack.newBuilder().build(), observer);
+    }
 
     public void statusRequest() {
         waitForLoadedStub();

@@ -8,6 +8,8 @@ import services
 import time
 import communication_pb2 as pb2
 import numpy as np
+from os import listdir
+import random
 
 testPictureFilename = "../PictureReceivingTest/images/2,56,45.imageBytes"
 testPictureFilename2 = "../PictureReceivingTest/images/2,56,46.imageBytes"
@@ -444,6 +446,47 @@ class ServiceTests(unittest.TestCase):
         photoResponse = self.smartphoneService.photoTaken(footage, None)
 
         self.assertEqual(photoResponse.status, pb2.PhotoResponse.ITEM_ALREADY_EXISTS)
+
+
+def get_class_ids():
+    classFile = "../archive/coco.names"
+    with open(classFile, "rt") as f:
+        return f.read().rstrip("\n").split("\n")
+
+def get_images():
+    images_folder = "../test/images/"
+    image_names = [f for f in listdir(images_folder)]
+    images = []
+    for img in image_names:
+        file = open(images_folder + img, "rb")
+        images.append(file.read())
+        file.close()
+    return images
+
+def get_names():
+    classFile = "../test/names.txt"
+    with open(classFile, "rt") as f:
+        return f.read().rstrip("\n").split("\n")
+
+class PopulateStorageTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.classIds = get_class_ids()
+        cls.images = get_images()
+        cls.names = get_names() 
+
+    def test_populate_storage(self):
+        storage = iS.ItemsStorage()
+        items = 10
+        for _ in range(items):
+            name = random.choice(self.names)
+            img = random.choice(self.images)
+            id = random.choice(self.classIds)
+            self.classIds.remove(id)
+            lock = random.randint(0,1) == 1 
+            track = random.randint(0,1) == 1
+            storage.insertItem(id, lock, track, img, name)
+        iS.saveItemsStorage(storage)
 
 if __name__ == '__main__':
     unittest.main()

@@ -13,6 +13,8 @@ import androidx.core.content.ContextCompat;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.tecnico.moms.grpc.Communication;
+
 public class MyItemsActivity extends AppCompatActivity {
 
     @Override
@@ -42,5 +44,14 @@ public class MyItemsActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    /**
+     *  Called when information about items is received after a search request is sent
+     * @param itemInformations
+     *  A list containing information about all items that comply with the search parameters
+     */
+    public void searchedItems(List<Communication.ItemInformation> itemInformations) {
+        //TODO
     }
 }

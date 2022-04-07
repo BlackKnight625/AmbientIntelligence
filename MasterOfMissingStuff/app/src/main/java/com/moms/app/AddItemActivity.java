@@ -84,7 +84,13 @@ public class AddItemActivity extends AppCompatActivity {
         }
     }
 
-    // This method is called by the PhotoTakenObserver when a PhotoResponse is received
+    /**
+     *  This method is called by the PhotoTakenObserver when a PhotoResponse is received
+     * @param newItemId
+     *  The item id of the new item that was classified (empty string if status != OK)
+     * @param status
+     *  The status of the photo's response
+     */
     public void photoTakenResponseReceived(String newItemId, Communication.PhotoResponse.ResponseStatus status) {
         //TODO
 
@@ -99,6 +105,14 @@ public class AddItemActivity extends AppCompatActivity {
             case MULTIPLE_ITEMS_FOUND:
                 break;
         }
+    }
+
+    /**
+     *  Called when an Ack is received after the app sent a confirmation that the item being added
+     * was inserted into the system
+     */
+    public void confirmedItemInsertion() {
+        //TODO
     }
 
 }

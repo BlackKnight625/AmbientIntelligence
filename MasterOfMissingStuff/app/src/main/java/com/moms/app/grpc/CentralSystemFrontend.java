@@ -29,7 +29,6 @@ public class CentralSystemFrontend {
         //Coms related
     private SmartphoneAppToCentralSystemServiceGrpc.SmartphoneAppToCentralSystemServiceStub stub = null;
     private ManagedChannel channel;
-    private Semaphore semaphore = new Semaphore(0);
 
     // Public attributes
 
@@ -37,73 +36,33 @@ public class CentralSystemFrontend {
 
     // Constructors
 
-    public CentralSystemFrontend(String ip, String port, GreetObserver greetObserver) {
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    channel = ManagedChannelBuilder.forAddress(ip, Integer.parseInt(port)).usePlaintext().build();
+    public CentralSystemFrontend(String ip, String port) throws NumberFormatException {
+        channel = ManagedChannelBuilder.forAddress(ip, Integer.parseInt(port)).usePlaintext().build();
 
-                    stub = SmartphoneAppToCentralSystemServiceGrpc.newStub(channel);
-                    System.out.println("Communication between Central System and Smartphone App established!");
-                } catch (NumberFormatException e) {
-                    greetObserver.onError(e);
-                    return;
-                }
-
-                // All future threads that want to use the stub may now do so
-                semaphore.release(Integer.MAX_VALUE);
-
-                statusRequest(); //Asking for status requests to be sent every second
-            }
-        }.start();
-
-        new Thread() {
-            @Override
-            public void run() {
-                while(true) {
-                    try {
-                        keepAlive();
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }.start();
+        stub = SmartphoneAppToCentralSystemServiceGrpc.newStub(channel);
     }
 
     // Service methods
 
     public void greet(GreetObserver observer) {
-        waitForLoadedStub();
-
         stub.greet(Communication.Ack.newBuilder().build(), observer);
     }
 
     public void statusRequest() {
-        waitForLoadedStub();
-
         stub.statusRequest(Communication.StatusRequest.newBuilder().build(), new StatusResponseObserver());
     }
 
     private void keepAlive() {
-        waitForLoadedStub();
-
         stub.keepAlive(Communication.Ack.newBuilder().build(), new KeepAliveObserver());
     }
 
     public void locateItem(String id, LocateItemObserver footageReceivedObserver) {
-        waitForLoadedStub();
-
         Communication.ItemId itemId = getIdFrom(id);
 
         stub.locateItem(itemId, footageReceivedObserver);
     }
 
     public void photoTaken(ByteString footageBytes, Calendar currentTime, PhotoTakenObserver photoStatusObserver) {
-        waitForLoadedStub();
-
         //Note: Calendar.getInstance() returns a Calendar with the current timestamp
 
         Communication.Timestamp timestamp = Communication.Timestamp.newBuilder().
@@ -124,8 +83,6 @@ public class CentralSystemFrontend {
     }
 
     public void confirmItemInsertion(String id, boolean tracked, boolean locked, String itemName, ConfirmItemInsertionObserver itemInsertionAckObserver) {
-        waitForLoadedStub();
-
         Communication.ItemInformation information = Communication.ItemInformation.newBuilder().
                 setItemId(getIdFrom(id)).
                 setTracked(tracked).
@@ -138,8 +95,6 @@ public class CentralSystemFrontend {
     }
 
     public void searchItem(String itemName, SearchItemObserver searchedItemsObserver) {
-        waitForLoadedStub();
-
         Communication.SearchParameters parameters = Communication.SearchParameters.newBuilder().
                 setItemName(itemName).
                 build();
@@ -148,50 +103,53 @@ public class CentralSystemFrontend {
     }
 
     public void trackItem(String id, TrackItemObserver trackingItemAckObserver) {
-        waitForLoadedStub();
-
         stub.trackItem(getIdFrom(id), trackingItemAckObserver);
     }
 
     public void untrackItem(String id, UntrackItemObserver untrackingItemAckObserver) {
-        waitForLoadedStub();
-
         stub.untrackItem(getIdFrom(id), untrackingItemAckObserver);
     }
 
     public void lockItem(String id, LockItemObserver lockingItemAckObserver) {
-        waitForLoadedStub();
-
         stub.lockItem(getIdFrom(id), lockingItemAckObserver);
     }
 
     public void unlockItem(String id, UnlockItemObserver unlockingItemAckObserver) {
-        waitForLoadedStub();
-
         stub.unlockItem(getIdFrom(id), unlockingItemAckObserver);
     }
 
     public void removeItem(String id, RemoveItemObserver removingItemAckObserver) {
-        waitForLoadedStub();
-
         stub.removeItem(getIdFrom(id), removingItemAckObserver);
     }
 
     // Other methods
 
-    public void waitForLoadedStub() {
-        try {
-            semaphore.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            semaphore.release();
-        }
-    }
-
     public Communication.ItemId getIdFrom(String id) {
         return Communication.ItemId.newBuilder()
                 .setId(id)
                 .build();
+    }
+
+    /**
+     *  Called by the GreetObserver when a connection is established
+     */
+    public void communicationEstablished() {
+        statusRequest(); //Asking for status requests to be sent every second
+
+        new Thread() {
+            @Override
+            public void run() {
+                while(true) {
+                    try {
+                        keepAlive();
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+
+        System.out.println("Communication between Central System and Smartphone App established!");
     }
 }

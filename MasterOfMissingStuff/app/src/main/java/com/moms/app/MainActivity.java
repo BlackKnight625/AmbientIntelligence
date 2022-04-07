@@ -42,9 +42,13 @@ public class MainActivity extends AppCompatActivity {
 
                 GreetObserver observer = new GreetObserver(MainActivity.this);
 
-                CentralSystemFrontend.FRONTEND = new CentralSystemFrontend(ip_text.getText().toString(), port_text.getText().toString(), observer);
+                try {
+                    CentralSystemFrontend.FRONTEND = new CentralSystemFrontend(ip_text.getText().toString(), port_text.getText().toString());
 
-                CentralSystemFrontend.FRONTEND.greet(observer);
+                    CentralSystemFrontend.FRONTEND.greet(observer);
+                } catch (NumberFormatException e) {
+                    greetingError(e);
+                }
             }
         });
     }

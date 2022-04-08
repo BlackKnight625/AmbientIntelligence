@@ -23,7 +23,7 @@ class MyTestCase(unittest.TestCase):
     def test_something(self):
         self.assertEqual(True, True)  # add assertion here
 
-
+"""
 class ImageProcessingTests(unittest.TestCase):
     def test_readImage(self):
         image = processing.getImageFromBytesFile(testPictureFilename)
@@ -32,8 +32,8 @@ class ImageProcessingTests(unittest.TestCase):
         canva = cv2.resize(image, (960, 540))  # Resize image
 
         cv2.imshow("Message", canva)
-        cv2.waitKey(0)
-
+        cv2.waitKey(1)
+"""
 
 class TimeStamp:
 

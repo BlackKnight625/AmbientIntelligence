@@ -1,7 +1,4 @@
-import io
-from PIL import Image
 import cv2
-from cv2 import boundingRect
 import numpy as np
 
 

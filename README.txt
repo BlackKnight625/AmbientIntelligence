@@ -47,3 +47,8 @@
             7.3.3. Click on "lock" in case the toggle button is turned off
             7.3.4. Move the item that's being surveilled by the camera
             7.3.5. You will receive a notification saying that the locked item has been moved
+        
+    To launch the Central System unit tests:
+        1. Go to its directory using a command line.
+        2. Type "python tests.py" to run all the tests, or
+        2.1. If you want to run individual tests, type "python -m unittest <test_module>.<TestClass>.<test_method>"

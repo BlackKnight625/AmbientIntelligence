@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,6 +26,7 @@ import com.moms.app.grpc.CentralSystemFrontend;
 import com.moms.app.grpc.observers.PhotoTakenObserver;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -134,6 +137,13 @@ public class AddItemActivity extends AppCompatActivity {
             photoTaken = true;
             enableSaveButtonIfTitleExists();
         }
+
+        else if (requestCode == MainActivity.REQUEST_NEW_ITEM && resultCode == MainActivity.RESULT_OK) {
+
+            EditText editText = (EditText) findViewById(R.id.editTextTextPersonName);
+            editText.setText("");
+            ((ImageView) findViewById(R.id.imageView7)).setImageDrawable(getResources().getDrawable(R.drawable.placeholder));
+        }
     }
 
     public void enableSaveButtonIfTitleExists() {
@@ -160,11 +170,10 @@ public class AddItemActivity extends AppCompatActivity {
                 Item newItem = new Item(name, image, true, false, newItemId);
 
                 MainActivity.ITEMS.put(newItemId, newItem);
-                MainActivity.REQUEST_LOAD_ITEMS = true;
 
                 Intent intent = new Intent(getApplicationContext(), ItemActivity.class);
                 intent.putExtra("item", newItemId);
-                startActivity(intent);
+                startActivityForResult(intent, MainActivity.REQUEST_NEW_ITEM);
                 break;
             case NO_ITEM_FOUND:
                 runOnUiThread(() -> {

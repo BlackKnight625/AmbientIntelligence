@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     public static boolean REQUEST_LOAD_ITEMS = true;
     public static int REQUEST_REMOVE = 0;
     public static int RESULT_OK = 0;
+    public static int REQUEST_NEW_ITEM = 1;
 
     public static MainActivity MAIN_ACTIVITY;
 

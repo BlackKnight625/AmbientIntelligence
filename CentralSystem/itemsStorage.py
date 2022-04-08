@@ -49,8 +49,8 @@ class ItemsStorage:
     def isLocked(self, itemId):
         return self.dic[itemId][lock]
 
-    def setTracked(self, itemId, locked):
-        self.dic[itemId][track] = locked
+    def setTracked(self, itemId, tracked):
+        self.dic[itemId][track] = tracked
 
     def setLocked(self, itemId, locked):
         self.dic[itemId][lock] = locked

@@ -76,19 +76,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        //Testing notifications
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                sendNotification("Hello there!", "General Kenobi");
-            }
-        }.start();
     }
 
     /**

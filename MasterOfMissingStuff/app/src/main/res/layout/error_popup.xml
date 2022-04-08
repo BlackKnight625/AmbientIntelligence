@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="#62def8">
+    android:background="#474E50"
+    android:textAlignment="center">
 
     <TextView
         android:id="@+id/errorPopupText"
@@ -16,6 +16,8 @@
         android:layout_marginEnd="30dp"
         android:layout_marginRight="30dp"
         android:layout_marginBottom="30dp"
+        android:fontFamily="sans-serif-light"
+        android:textColor="#FFFFFF"
         android:textSize="22sp" />
 
 </RelativeLayout>

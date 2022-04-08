@@ -234,6 +234,8 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
 
     def trackItem(self, itemID, context):  # Returns Ack
         itemsLock.w_acquire()
+        print("Item track before = " + str(items_storage.dic[itemID.id][iS.track]))
+        print("Item track after = " + str(True))
         items_storage.setTracked(itemID.id, True)
         itemsLock.w_release()
 
@@ -243,6 +245,8 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
 
     def untrackItem(self, itemID, context):  # Returns Ack
         itemsLock.w_acquire()
+        print("Item track before = " + str(items_storage.dic[itemID.id][iS.track]))
+        print("Item track after = " + str(False))
         items_storage.setTracked(itemID.id, False)
         itemsLock.w_release()
 

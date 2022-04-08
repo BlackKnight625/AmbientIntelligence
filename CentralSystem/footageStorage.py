@@ -59,7 +59,7 @@ class FootageStorage:
     def removeOutdatedPictures(self, itemId, currentTimestamp):
         footage = self.map[itemId]
 
-        for i in range(len(footage)):
+        for i in range(len(footage) - 1, 0, -1):
             timestamp = footage[i].timestamp
 
             if (isTimeDifferenceTooLarge(currentTimestamp, timestamp)):

@@ -62,7 +62,7 @@ class CameraToCentralSystemService(pb2_grpc.CameraToCentralSystemServiceServicer
 
         #print("Locations:")
         #print(locations)
-        print("Received footage! Size: ", len(img_bytes))
+        print("Received footage! Size: ", len(img_bytes), ", footage number ", self.footageReceived)
         print("Items:", [getItemName(item) for item in items])
 
         seenItems = set()

@@ -5,14 +5,21 @@ import static java.util.stream.Collectors.toList;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ScrollView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +39,7 @@ import pt.tecnico.moms.grpc.Communication;
 
 public class MyItemsActivity extends AppCompatActivity {
     private ListView listView;
+    private boolean isKeyboardShowing = false;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -49,6 +57,27 @@ public class MyItemsActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.listview);
         ItemAdapter itemAdapter = new ItemAdapter(this, R.layout.list_row, new ArrayList(MainActivity.ITEMS.values()));
         listView.setAdapter(itemAdapter);
+
+        EditText editText = (EditText) findViewById(R.id.editTextTextPersonName4);
+        editText.addTextChangedListener(new TextWatcher() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            public void afterTextChanged(Editable s) {
+                List<Item> filteredItems =
+                        (List<Item>) (new ArrayList(MainActivity.ITEMS.values()))
+                                .stream()
+                                .filter(o -> {
+                                    Item item = (Item) o;
+                                    String searchParams = ((EditText)findViewById(R.id.editTextTextPersonName4)).getText().toString();
+                                    return item.getName().regionMatches(true, 0, searchParams, 0, searchParams.length());
+                                })
+                                .collect(toList());
+                filteredItems.forEach(i -> System.out.println(i.getName()));
+                ItemAdapter itemAdapter = new ItemAdapter(MyItemsActivity.this, R.layout.list_row, filteredItems);
+                runOnUiThread(() -> listView.setAdapter(itemAdapter));
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
 
         /*
         ListView listView = (ListView) findViewById(R.id.listview);

@@ -38,7 +38,7 @@ class ItemsStorage:
         self.dic[itemId][track] = tracked
         self.dic[itemId][lock] = locked
         self.dic[itemId][image] = img
-        self.dic[itemId][name] = itemName.lower()
+        self.dic[itemId][name] = itemName
 
     def removeItem(self, itemId):
         del self.dic[itemId]
@@ -49,8 +49,8 @@ class ItemsStorage:
     def isLocked(self, itemId):
         return self.dic[itemId][lock]
 
-    def setTracked(self, itemId, locked):
-        self.dic[itemId][track] = locked
+    def setTracked(self, itemId, tracked):
+        self.dic[itemId][track] = tracked
 
     def setLocked(self, itemId, locked):
         self.dic[itemId][lock] = locked
@@ -71,7 +71,7 @@ class ItemsStorage:
     def get_search_results(self, searchParameters: str):
         searchParameters = searchParameters.lower()
         res = []
-        items = [self.dic[item][name].find(searchParameters) for item in self.dic]
+        items = [self.dic[item][name].lower().find(searchParameters) for item in self.dic]
         ix = 0
         for i in self.dic:
             if items[ix] == 0:

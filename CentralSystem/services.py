@@ -78,7 +78,7 @@ class CameraToCentralSystemService(pb2_grpc.CameraToCentralSystemServiceServicer
 
             seenItems.add(item)
 
-            if items_storage.has_item(item):
+            if items_storage.has_item(item) and items_storage.isTracked(item):
                 if items_storage.isLocked(item):
                     # The item seen is locked. Checking if it moved
                     lastSeenFootage = footageStorage.getLastSeenFootageAndInformation(item)
@@ -102,6 +102,7 @@ class CameraToCentralSystemService(pb2_grpc.CameraToCentralSystemServiceServicer
 
         if self.footageReceived % 10 == 0:
             # Time to save all footage and items
+            print("Saving all footage and item information in files")
             footageLock.r_acquire()
             fs.saveFootageStorage(footageStorage)
             footageLock.r_release()
@@ -197,7 +198,7 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
             itemImage = getSubRect(image, boundingBoxes[0])
 
             itemsLock.w_acquire()
-            items_storage.insertItem(newId, True, False, itemImage, photoRequest.itemName)
+            items_storage.insertItem(newId, False, True, itemImage, photoRequest.itemName)
             itemsLock.w_release()
 
         print("Photo taken: Status- ", photoResponse.status, ", new id- ", photoResponse.newItemId.id, ", name- ", photoRequest.itemName)

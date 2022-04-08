@@ -1,5 +1,6 @@
 package com.moms.app;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
@@ -133,6 +134,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static PopupWindow showPopupWindow(Activity activity, String popupText) {
+        return showPopupWindow(activity, popupText, null);
+    }
+
+    public static PopupWindow showPopupWindow(Activity activity, String popupText, @Nullable View rootView) {
 
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
@@ -147,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
         // show the popup window
         // which view you pass in doesn't matter, it is only used for the window tolken
-        popupWindow.showAtLocation(activity.getCurrentFocus(), Gravity.CENTER, 0, 0);
+        popupWindow.showAtLocation(rootView == null ? activity.getCurrentFocus() : rootView, Gravity.CENTER, 0, 0);
 
         TextView errorPopupText = popupView.findViewById(R.id.errorPopupText);
 

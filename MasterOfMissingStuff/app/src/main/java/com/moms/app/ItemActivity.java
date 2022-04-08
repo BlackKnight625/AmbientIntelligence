@@ -1,12 +1,21 @@
 package com.moms.app;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,15 +30,18 @@ import com.moms.app.grpc.observers.UnlockItemObserver;
 import com.moms.app.grpc.observers.UntrackItemObserver;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import pt.tecnico.moms.grpc.Communication;
 
 public class ItemActivity extends AppCompatActivity {
+
+    // Private attributes
+
     private Switch track_switch;
     private Switch lock_switch;
     private Item item;
-
-    // Private attributes
 
     // Other methods
 
@@ -119,7 +131,6 @@ public class ItemActivity extends AppCompatActivity {
      * Called when an Ack is received after removing an item
      */
     public void itemRemoved() {
-        //TODO
         MainActivity.ITEMS.remove(item.getIdName());
         setResult(MainActivity.RESULT_OK);
         finish();
@@ -132,8 +143,71 @@ public class ItemActivity extends AppCompatActivity {
      * @param boundingBoxes
      *  List of Bounding boxes associated with each picture that show where the item is
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void itemLocated(List<Communication.Footage> pictures, List<Communication.BoundingBox> boundingBoxes) {
-        //TODO
+        runOnUiThread(() -> {
+            //Creating the view to show the footage
+
+            // inflate the layout of the popup window
+            LayoutInflater inflater = (LayoutInflater)
+                    getSystemService(LAYOUT_INFLATER_SERVICE);
+            View popupView = inflater.inflate(R.layout.locate_footage, null);
+
+            // create the popup window
+            int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+            int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+            boolean focusable = true; // lets taps outside the popup also dismiss it
+            final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+            // show the popup window
+            // which view you pass in doesn't matter, it is only used for the window tolken
+            popupWindow.showAtLocation(findViewById(R.id.imageView3), Gravity.CENTER, 0, 0);
+
+            ImageView imageView = popupView.findViewById(R.id.locateFootageView);
+
+            // dismiss the popup window when touched
+            popupView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    popupWindow.dismiss();
+                    return true;
+                }
+            });
+
+            //Creating a gif with the pictures
+
+            //Converting all picture's ByteStrings to Bitmaps
+            List<Bitmap> bitmaps = pictures.
+                    stream().
+                    map(f -> f.getPicture()).
+                    map(bs -> {
+                        byte[] byteArray = bs.toByteArray();
+                        return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                    }).
+                    collect(Collectors.toList());
+
+            AtomicBoolean stopShowing = new AtomicBoolean(false);
+
+            new Thread() {
+                int i = 0;
+
+                @Override
+                public void run() {
+                    while(!stopShowing.get()) {
+                        runOnUiThread(() -> imageView.setImageBitmap(bitmaps.get(i % bitmaps.size())));
+
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        i++;
+                    }
+                }
+            }.start();
+
+            popupWindow.setOnDismissListener(() -> stopShowing.set(true));
+        });
     }
 
     public void setTrackSwitch(boolean track) {

@@ -393,8 +393,8 @@ class ServiceTests(unittest.TestCase):
 
         newInformation = services.items_storage.getAllItemsAsList()[0]
 
-        self.assertEqual(newInformation[1], True)
-        self.assertEqual(newInformation[2], False)
+        self.assertEqual(newInformation[1], False)
+        self.assertEqual(newInformation[2], True)
         self.assertEqual(newInformation[4], "jeff")
 
         # The following code lets us visualize the image associated with the inserted item

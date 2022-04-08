@@ -2,6 +2,9 @@ package com.moms.app;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -186,6 +189,25 @@ public class ItemActivity extends AppCompatActivity {
                     }).
                     collect(Collectors.toList());
 
+            Paint paint=new Paint();
+            paint.setColor(Color.RED);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(5);
+
+            //Modifying the bitmaps to have rectangles drawn on them
+            for(int i = 0; i < bitmaps.size(); i++) {
+                Bitmap bitmap = bitmaps.get(i);
+
+                Bitmap newBitmap = bitmap.copy(bitmap.getConfig(), true);
+
+                bitmaps.set(i, newBitmap);
+
+                Canvas canvas = new Canvas(newBitmap);
+                Communication.BoundingBox box = boundingBoxes.get(i);
+
+                canvas.drawRect(box.getLow().getX(), box.getHigh().getY(), box.getHigh().getX(), box.getLow().getY(), paint);
+            }
+
             AtomicBoolean stopShowing = new AtomicBoolean(false);
 
             new Thread() {
@@ -194,7 +216,13 @@ public class ItemActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     while(!stopShowing.get()) {
-                        runOnUiThread(() -> imageView.setImageBitmap(bitmaps.get(i % bitmaps.size())));
+                        runOnUiThread(() -> {
+                            int index = i % bitmaps.size();
+
+                            Bitmap bitmap = bitmaps.get(index);
+
+                            imageView.setImageBitmap(bitmap);
+                        });
 
                         try {
                             Thread.sleep(500);

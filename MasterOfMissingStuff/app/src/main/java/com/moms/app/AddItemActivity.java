@@ -3,6 +3,7 @@ package com.moms.app;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.Image;
 import android.os.Build;
@@ -70,6 +71,8 @@ public class AddItemActivity extends AppCompatActivity {
         });
 
         final Button save_button = findViewById(R.id.button7);
+        save_button.setBackgroundColor(Color.parseColor("#E4EAEE"));
+        save_button.setTextColor(Color.parseColor("#AEAEAE"));
         save_button.setEnabled(false);
         save_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,9 +150,14 @@ public class AddItemActivity extends AppCompatActivity {
     }
 
     public void enableSaveButtonIfTitleExists() {
+        Button save_button = findViewById(R.id.button7);
         if (((EditText)findViewById(R.id.editTextTextPersonName)).getText().toString().trim().length() > 0) {
-            findViewById(R.id.button7).setEnabled(true);
+            save_button.setBackgroundColor(Color.parseColor("#878686"));
+            save_button.setTextColor(Color.parseColor("#FFFFFF"));
+            save_button.setEnabled(true);
         } else {
+            save_button.setBackgroundColor(Color.parseColor("#E4EAEE"));
+            save_button.setTextColor(Color.parseColor("#AEAEAE"));
             findViewById(R.id.button7).setEnabled(false);
         }
     }

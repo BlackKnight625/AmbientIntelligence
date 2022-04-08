@@ -107,6 +107,11 @@ message KeepAliveResponse {
     Status status = 1;
 }
 
+message PhotoRequest {
+    Footage footage = 1;
+    string itemName = 2;
+}
+
 service SmartphoneAppToCentralSystemService {
 
     /* Called right after the user inserted the IP and Port of the Central System.
@@ -135,14 +140,7 @@ service SmartphoneAppToCentralSystemService {
        (independently if it's currently being tracked or not)
         If everything's OK, then a new ID is created for the identified item and gets returned.
      */
-    rpc photoTaken(Footage) returns (PhotoResponse);
-
-    /* Called when the user clicks "confirm insertion and track" after taking a photograph of a
-        previously un-existent item, giving it a name, and pressing "next". The image bytes will be ignored since
-        they'll already be processed when this function gets called. Therefore, they should be an empty byte array.
-        Returns an Ack.
-     */
-    rpc confirmItemInsertion(ItemInformation) returns (Ack);
+    rpc photoTaken(PhotoRequest) returns (PhotoResponse);
 
     /* Called when the user clicks "search" after having typed at least 1 letter in the
         "search item" text box, or if the user just opened the Search view.

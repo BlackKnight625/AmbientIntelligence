@@ -1,6 +1,5 @@
 package com.moms.app.grpc;
 
-import com.moms.app.grpc.observers.ConfirmItemInsertionObserver;
 import com.moms.app.grpc.observers.GreetObserver;
 import com.moms.app.grpc.observers.KeepAliveObserver;
 import com.moms.app.grpc.observers.LocateItemObserver;
@@ -15,7 +14,6 @@ import com.moms.app.grpc.observers.UntrackItemObserver;
 import com.google.protobuf.ByteString;
 
 import java.util.Calendar;
-import java.util.concurrent.Semaphore;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -66,7 +64,7 @@ public class CentralSystemFrontend {
         stub.locateItem(itemId, footageReceivedObserver);
     }
 
-    public void photoTaken(ByteString footageBytes, Calendar currentTime, PhotoTakenObserver photoStatusObserver) {
+    public void photoTaken(ByteString footageBytes, String itemName, Calendar currentTime, PhotoTakenObserver photoStatusObserver) {
         //Note: Calendar.getInstance() returns a Calendar with the current timestamp
 
         Communication.Timestamp timestamp = Communication.Timestamp.newBuilder().
@@ -83,19 +81,12 @@ public class CentralSystemFrontend {
                 setTime(timestamp).
                 build();
 
-        stub.photoTaken(footage, photoStatusObserver);
-    }
-
-    public void confirmItemInsertion(String id, boolean tracked, boolean locked, String itemName, ConfirmItemInsertionObserver itemInsertionAckObserver) {
-        Communication.ItemInformation information = Communication.ItemInformation.newBuilder().
-                setItemId(getIdFrom(id)).
-                setTracked(tracked).
-                setLocked(locked).
-                setName(itemName).
-                setImage(ByteString.EMPTY).
+        Communication.PhotoRequest request = Communication.PhotoRequest.newBuilder().
+                setItemName(itemName).
+                setFootage(footage).
                 build();
 
-        stub.confirmItemInsertion(information, itemInsertionAckObserver);
+        stub.photoTaken(request, photoStatusObserver);
     }
 
     public void searchItem(String itemName, SearchItemObserver searchedItemsObserver) {

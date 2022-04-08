@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public static void showPopupWindow(Activity activity, String popupText) {
+    public static PopupWindow showPopupWindow(Activity activity, String popupText) {
 
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
@@ -161,5 +161,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        return popupWindow;
     }
 }

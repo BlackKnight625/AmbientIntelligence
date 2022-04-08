@@ -122,8 +122,6 @@ class CameraToCentralSystemService(pb2_grpc.CameraToCentralSystemServiceServicer
 
 
 class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemServiceServicer):
-    def __init__(self, *args, **kwargs):
-        self.lastPhotoTaken = None
 
     def greet(self, request, context):
         print("Greetings!")
@@ -174,7 +172,8 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
 
         return videoFootageResponse
 
-    def photoTaken(self, footage, context):  # Returns PhotoResponse
+    def photoTaken(self, photoRequest, context):  # Returns PhotoResponse
+        footage = photoRequest.footage
         img_bytes = footage.picture
         image = imageProcessing.getImageFromBytes(img_bytes)
 
@@ -190,25 +189,20 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
             photoResponse.newItemId.id = ""
             photoResponse.status = pb2.PhotoResponse.ITEM_ALREADY_EXISTS
         else:
-            photoResponse.newItemId.id = getItemName(items[0])
+            newId = getItemName(items[0])
+            photoResponse.newItemId.id = newId
             photoResponse.status = pb2.PhotoResponse.OK
 
             # Getting a new image containing just the section that has the identified item
-            self.lastPhotoTaken = getSubRect(image, boundingBoxes[0])
+            itemImage = getSubRect(image, boundingBoxes[0])
 
-        print("Photo taken: Status- ", photoResponse.status, ", new item id- ", photoResponse.newItemId.id)
+            itemsLock.w_acquire()
+            items_storage.insertItem(newId, True, False, itemImage, photoRequest.itemName)
+            itemsLock.w_release()
+
+        print("Photo taken: Status- ", photoResponse.status, ", new id- ", photoResponse.newItemId.id, ", name- ", photoRequest.itemName)
 
         return photoResponse
-
-    def confirmItemInsertion(self, itemInformation, context):  # Returns Ack
-        itemsLock.w_acquire()
-        items_storage.insertItem(itemInformation.itemId.id, itemInformation.tracked, itemInformation.locked,
-                                 self.lastPhotoTaken, itemInformation.name)
-        itemsLock.w_release()
-
-        print("Confirm item insertion: id- ", itemInformation.itemId.id, ", name- ", itemInformation.name)
-
-        return pb2.Ack()
 
     def searchItem(self, searchParameters, context):  # Returns SearchResponse
         searchResponse = pb2.SearchResponse()

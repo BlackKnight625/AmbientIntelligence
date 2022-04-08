@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,6 +35,7 @@ import pt.tecnico.moms.grpc.Communication;
 public class AddItemActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private boolean photoTaken = false;
+    private PopupWindow currentPopup = null;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -78,7 +80,11 @@ public class AddItemActivity extends AppCompatActivity {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 byte[] imageBytes = stream.toByteArray();
-                CentralSystemFrontend.FRONTEND.photoTaken(ByteString.copyFrom(imageBytes), Calendar.getInstance(), new PhotoTakenObserver(AddItemActivity.this));
+                CentralSystemFrontend.FRONTEND.photoTaken(
+                        ByteString.copyFrom(imageBytes),
+                        ((EditText)findViewById(R.id.editTextTextPersonName)).getText().toString(),
+                        Calendar.getInstance(),
+                        new PhotoTakenObserver(AddItemActivity.this));
             }
         });
 
@@ -90,6 +96,27 @@ public class AddItemActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        dismissPopup();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        dismissPopup();
+    }
+
+    public void dismissPopup() {
+        if(currentPopup != null) {
+            currentPopup.dismiss();
+            currentPopup = null;
+        }
     }
 
     private void dispatchTakePictureIntent() {
@@ -135,11 +162,8 @@ public class AddItemActivity extends AppCompatActivity {
      *  The status of the photo's response
      */
     public void photoTakenResponseReceived(String newItemId, Communication.PhotoResponse.ResponseStatus status) {
-        //TODO
-
         switch (status) {
             case OK:
-                //TODO: Show the user the identified item's category
                 String name = ((EditText)findViewById(R.id.editTextTextPersonName)).getText().toString();
                 ImageView imageView = (ImageView) findViewById(R.id.imageView7);
                 Bitmap image = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
@@ -152,25 +176,25 @@ public class AddItemActivity extends AppCompatActivity {
                 startActivityForResult(intent, MainActivity.REQUEST_NEW_ITEM);
                 break;
             case NO_ITEM_FOUND:
-                MainActivity.showPopupWindow(this, "No item was found in the provided picture. Try a different angle.");
+                runOnUiThread(() -> {
+                    currentPopup = MainActivity.showPopupWindow(this, "No item was found in the provided picture. Try a different angle.");
+                });
+
                 break;
             case ITEM_ALREADY_EXISTS:
-                MainActivity.showPopupWindow(this, "Item of type (" + newItemId + ") already exists. You may modify/remove it in the " +
-                        "'Search Item' menu.");
+                runOnUiThread(() -> {
+                    currentPopup = MainActivity.showPopupWindow(this, "Item of type (" + newItemId + ") already exists. You may modify/remove it in the " +
+                            "'Search Item' menu.");
+                });
+
                 break;
             case MULTIPLE_ITEMS_FOUND:
-                MainActivity.showPopupWindow(this, "Multiple items were found in the picture. Make sure there are no other items near the " +
-                        "item you're trying to take a picture of. For better results, place the desired item on a uniformly colored surface.");
+                runOnUiThread(() -> {
+                    currentPopup = MainActivity.showPopupWindow(this, "Multiple items were found in the picture. Make sure there are no other items near the " +
+                            "item you're trying to take a picture of. For better results, place the desired item on a uniformly colored surface.");
+                });
+
                 break;
         }
     }
-
-    /**
-     *  Called when an Ack is received after the app sent a confirmation that the item being added
-     * was inserted into the system
-     */
-    public void confirmedItemInsertion() {
-        //TODO
-    }
-
 }

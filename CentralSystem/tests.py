@@ -372,38 +372,30 @@ class ServiceTests(unittest.TestCase):
         self.assertEqual(len(statusResponse.movedLockedItems.itemNames), 1)
         self.assertEqual(statusResponse.movedLockedItems.itemNames[0], itemId.id)
 
-    def test_photoTakenAndConfirmInsertion(self):
+    def test_photoTaken(self):
+        photoRequest = pb2.PhotoRequest()
         footage = pb2.Footage()
         timestamp = TimeStamp()
 
         footage.picture = imageProcessing.getImageBytesFromBytesFile(singlePersonFilename)
         footage.time.CopyFrom(timestamp.toGrpc())
 
-        photoResponse = self.smartphoneService.photoTaken(footage, None)
+        photoRequest.footage.CopyFrom(footage)
+        photoRequest.itemName = "jeff"
+
+        photoResponse = self.smartphoneService.photoTaken(photoRequest, None)
 
         self.assertEqual(photoResponse.status, pb2.PhotoResponse.OK)
         self.assertEqual(photoResponse.newItemId.id, "person")
 
-        # Photo sent, photoResponse received. Preparing for confirmItemInsertion
-
-        itemInformation = pb2.ItemInformation()
-
-        itemInformation.itemId.CopyFrom(photoResponse.newItemId)
-        itemInformation.tracked = True
-        itemInformation.locked = False
-        itemInformation.image = imageProcessing.getBytesFromImage(np.zeros(1))  # Doesn't matter. Central system already has the item's image
-        itemInformation.name = "jeff"
-
-        self.smartphoneService.confirmItemInsertion(itemInformation, None)
-
         self.assertEqual(len(services.items_storage.getAllItemsAsList()), 1)
-        self.assertTrue(services.items_storage.has_item(itemInformation.itemId.id))
+        self.assertTrue(services.items_storage.has_item("person"))
 
         newInformation = services.items_storage.getAllItemsAsList()[0]
 
-        self.assertEqual(newInformation[1], itemInformation.tracked)
-        self.assertEqual(newInformation[2], itemInformation.locked)
-        self.assertEqual(newInformation[4], itemInformation.name)
+        self.assertEqual(newInformation[1], True)
+        self.assertEqual(newInformation[2], False)
+        self.assertEqual(newInformation[4], "jeff")
 
         # The following code lets us visualize the image associated with the inserted item
 
@@ -417,28 +409,37 @@ class ServiceTests(unittest.TestCase):
         """
         
     def test_photoTakenNoItemFound(self):
+        photoRequest = pb2.PhotoRequest()
         footage = pb2.Footage()
         timestamp = TimeStamp()
 
         footage.picture = imageProcessing.getImageBytesFromBytesFile(nothingFilename)
         footage.time.CopyFrom(timestamp.toGrpc())
 
-        photoResponse = self.smartphoneService.photoTaken(footage, None)
+        photoRequest.footage.CopyFrom(footage)
+        photoRequest.itemName = "nothing"
+
+        photoResponse = self.smartphoneService.photoTaken(photoRequest, None)
 
         self.assertEqual(photoResponse.status, pb2.PhotoResponse.NO_ITEM_FOUND)
 
     def test_photoTakenMultipleItemsFound(self):
+        photoRequest = pb2.PhotoRequest()
         footage = pb2.Footage()
         timestamp = TimeStamp()
 
         footage.picture = imageProcessing.getImageBytesFromBytesFile(testPictureFilename2)
         footage.time.CopyFrom(timestamp.toGrpc())
 
-        photoResponse = self.smartphoneService.photoTaken(footage, None)
+        photoRequest.footage.CopyFrom(footage)
+        photoRequest.itemName = "multiple"
+
+        photoResponse = self.smartphoneService.photoTaken(photoRequest, None)
 
         self.assertEqual(photoResponse.status, pb2.PhotoResponse.MULTIPLE_ITEMS_FOUND)
 
     def test_photoTakenItemAlreadyExists(self):
+        photoRequest = pb2.PhotoRequest()
         footage = pb2.Footage()
         timestamp = TimeStamp()
 
@@ -447,7 +448,10 @@ class ServiceTests(unittest.TestCase):
         footage.picture = imageProcessing.getImageBytesFromBytesFile(singlePersonFilename)
         footage.time.CopyFrom(timestamp.toGrpc())
 
-        photoResponse = self.smartphoneService.photoTaken(footage, None)
+        photoRequest.footage.CopyFrom(footage)
+        photoRequest.itemName = "jeff2"
+
+        photoResponse = self.smartphoneService.photoTaken(photoRequest, None)
 
         self.assertEqual(photoResponse.status, pb2.PhotoResponse.ITEM_ALREADY_EXISTS)
 

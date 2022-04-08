@@ -153,16 +153,17 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
         pictures = []
         boundingBoxes = []
 
-        for footage in lastSeenFootage:
-            picture = pb2.Footage()
+        if lastSeenFootage is not None:
+            for footage in lastSeenFootage:
+                picture = pb2.Footage()
 
-            boundingBox = getGrpcBoundingBoxFromCv2(footage.boundingBox)
+                boundingBox = getGrpcBoundingBoxFromCv2(footage.boundingBox)
 
-            picture.time.CopyFrom(footage.timestamp)
-            picture.picture = imageProcessing.getBytesFromImage(footage.picture)
+                picture.time.CopyFrom(footage.timestamp)
+                picture.picture = imageProcessing.getBytesFromImage(footage.picture)
 
-            pictures.append(picture)
-            boundingBoxes.append(boundingBox)
+                pictures.append(picture)
+                boundingBoxes.append(boundingBox)
 
         footageLock.r_release()
 

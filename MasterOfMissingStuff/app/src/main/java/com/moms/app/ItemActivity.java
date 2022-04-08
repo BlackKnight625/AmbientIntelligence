@@ -148,94 +148,101 @@ public class ItemActivity extends AppCompatActivity {
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void itemLocated(List<Communication.Footage> pictures, List<Communication.BoundingBox> boundingBoxes) {
-        runOnUiThread(() -> {
-            //Creating the view to show the footage
-
-            // inflate the layout of the popup window
-            LayoutInflater inflater = (LayoutInflater)
-                    getSystemService(LAYOUT_INFLATER_SERVICE);
-            View popupView = inflater.inflate(R.layout.locate_footage, null);
-
-            // create the popup window
-            int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-            int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-            boolean focusable = true; // lets taps outside the popup also dismiss it
-            final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-
-            // show the popup window
-            // which view you pass in doesn't matter, it is only used for the window tolken
-            popupWindow.showAtLocation(findViewById(R.id.imageView3), Gravity.CENTER, 0, 0);
-
-            ImageView imageView = popupView.findViewById(R.id.locateFootageView);
-
-            // dismiss the popup window when touched
-            popupView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    popupWindow.dismiss();
-                    return true;
-                }
+        if(pictures.isEmpty()) {
+            runOnUiThread(() -> {
+                MainActivity.showPopupWindow(ItemActivity.this, "There's no footage of this item", findViewById(R.id.imageView3));
             });
+        }
+        else {
+            runOnUiThread(() -> {
+                //Creating the view to show the footage
 
-            //Creating a gif with the pictures
+                // inflate the layout of the popup window
+                LayoutInflater inflater = (LayoutInflater)
+                        getSystemService(LAYOUT_INFLATER_SERVICE);
+                View popupView = inflater.inflate(R.layout.locate_footage, null);
 
-            //Converting all picture's ByteStrings to Bitmaps
-            List<Bitmap> bitmaps = pictures.
-                    stream().
-                    map(f -> f.getPicture()).
-                    map(bs -> {
-                        byte[] byteArray = bs.toByteArray();
-                        return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-                    }).
-                    collect(Collectors.toList());
+                // create the popup window
+                int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+                int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+                boolean focusable = true; // lets taps outside the popup also dismiss it
+                final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
 
-            Paint paint=new Paint();
-            paint.setColor(Color.RED);
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(5);
+                // show the popup window
+                // which view you pass in doesn't matter, it is only used for the window tolken
+                popupWindow.showAtLocation(findViewById(R.id.imageView3), Gravity.CENTER, 0, 0);
 
-            //Modifying the bitmaps to have rectangles drawn on them
-            for(int i = 0; i < bitmaps.size(); i++) {
-                Bitmap bitmap = bitmaps.get(i);
+                ImageView imageView = popupView.findViewById(R.id.locateFootageView);
 
-                Bitmap newBitmap = bitmap.copy(bitmap.getConfig(), true);
-
-                bitmaps.set(i, newBitmap);
-
-                Canvas canvas = new Canvas(newBitmap);
-                Communication.BoundingBox box = boundingBoxes.get(i);
-
-                canvas.drawRect(box.getLow().getX(), box.getHigh().getY(), box.getHigh().getX(), box.getLow().getY(), paint);
-            }
-
-            AtomicBoolean stopShowing = new AtomicBoolean(false);
-
-            new Thread() {
-                int i = 0;
-
-                @Override
-                public void run() {
-                    while(!stopShowing.get()) {
-                        runOnUiThread(() -> {
-                            int index = i % bitmaps.size();
-
-                            Bitmap bitmap = bitmaps.get(index);
-
-                            imageView.setImageBitmap(bitmap);
-                        });
-
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        i++;
+                // dismiss the popup window when touched
+                popupView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        popupWindow.dismiss();
+                        return true;
                     }
-                }
-            }.start();
+                });
 
-            popupWindow.setOnDismissListener(() -> stopShowing.set(true));
-        });
+                //Creating a gif with the pictures
+
+                //Converting all picture's ByteStrings to Bitmaps
+                List<Bitmap> bitmaps = pictures.
+                        stream().
+                        map(f -> f.getPicture()).
+                        map(bs -> {
+                            byte[] byteArray = bs.toByteArray();
+                            return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                        }).
+                        collect(Collectors.toList());
+
+                Paint paint=new Paint();
+                paint.setColor(Color.RED);
+                paint.setStyle(Paint.Style.STROKE);
+                paint.setStrokeWidth(5);
+
+                //Modifying the bitmaps to have rectangles drawn on them
+                for(int i = 0; i < bitmaps.size(); i++) {
+                    Bitmap bitmap = bitmaps.get(i);
+
+                    Bitmap newBitmap = bitmap.copy(bitmap.getConfig(), true);
+
+                    bitmaps.set(i, newBitmap);
+
+                    Canvas canvas = new Canvas(newBitmap);
+                    Communication.BoundingBox box = boundingBoxes.get(i);
+
+                    canvas.drawRect(box.getLow().getX(), box.getHigh().getY(), box.getHigh().getX(), box.getLow().getY(), paint);
+                }
+
+                AtomicBoolean stopShowing = new AtomicBoolean(false);
+
+                new Thread() {
+                    int i = 0;
+
+                    @Override
+                    public void run() {
+                        while(!stopShowing.get()) {
+                            runOnUiThread(() -> {
+                                int index = i % bitmaps.size();
+
+                                Bitmap bitmap = bitmaps.get(index);
+
+                                imageView.setImageBitmap(bitmap);
+                            });
+
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            i++;
+                        }
+                    }
+                }.start();
+
+                popupWindow.setOnDismissListener(() -> stopShowing.set(true));
+            });
+        }
     }
 
     public void setTrackSwitch(boolean track) {

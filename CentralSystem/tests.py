@@ -455,7 +455,7 @@ class ServiceTests(unittest.TestCase):
 
         self.assertEqual(photoResponse.status, pb2.PhotoResponse.ITEM_ALREADY_EXISTS)
 
-
+"""
 def get_class_ids():
     classFile = "../archive/coco.names"
     with open(classFile, "rt") as f:
@@ -476,6 +476,7 @@ def get_names():
     with open(classFile, "rt") as f:
         return f.read().rstrip("\n").split("\n")
 
+# Test to populate the storage with random items and random images, just to see if the App can display them
 class PopulateStorageTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -495,6 +496,6 @@ class PopulateStorageTests(unittest.TestCase):
             track = random.randint(0,1) == 1
             storage.insertItem(id, lock, track, img, name)
         iS.saveItemsStorage(storage)
-
+"""
 if __name__ == '__main__':
     unittest.main()

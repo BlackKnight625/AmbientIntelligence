@@ -59,13 +59,11 @@ class CameraToCentralSystemService(pb2_grpc.CameraToCentralSystemServiceServicer
         # Processing the received image
         image = imageProcessing.getImageFromBytes(img_bytes)
         items, locations = imageProcessing.processImage(image)
-        print("Items:")
-        print([getItemName(item) for item in items])
-        print("\n")
-        print("Locations:")
-        print(locations)
-        print("\n")
+
+        #print("Locations:")
+        #print(locations)
         print("Received footage! Size: ", len(img_bytes))
+        print("Items:", [getItemName(item) for item in items])
 
         seenItems = set()
 
@@ -128,6 +126,7 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
         self.lastPhotoTaken = None
 
     def greet(self, request, context):
+        print("Greetings!")
         return pb2.Ack()
 
     def keepAlive(self, request, context):
@@ -146,12 +145,11 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
         return keepaliveResponse
 
     def locateItem(self, itemId, context):  # Returns VideoFootage
-        id = itemId.id
         videoFootageResponse = pb2.VideoFootage()
 
         footageLock.r_acquire()
 
-        lastSeenFootage = footageStorage.getLastSeenFootageAndInformation(id)
+        lastSeenFootage = footageStorage.getLastSeenFootageAndInformation(itemId.id)
 
         pictures = []
         boundingBoxes = []
@@ -171,6 +169,8 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
 
         videoFootageResponse.pictures.extend(pictures)
         videoFootageResponse.itemBoundingBoxes.extend(boundingBoxes)
+
+        print("Locate item: Bounding boxes- ", [getCv2BoundingBoxFromGrpc(bb) for bb in boundingBoxes])
 
         return videoFootageResponse
 
@@ -195,6 +195,9 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
 
             # Getting a new image containing just the section that has the identified item
             self.lastPhotoTaken = getSubRect(image, boundingBoxes[0])
+
+        print("Photo taken: Status- ", photoResponse.status, ", new item id- ", photoResponse.newItemId.id)
+
         return photoResponse
 
     def confirmItemInsertion(self, itemInformation, context):  # Returns Ack
@@ -203,10 +206,11 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
                                  self.lastPhotoTaken, itemInformation.name)
         itemsLock.w_release()
 
+        print("Confirm item insertion: id- ", itemInformation.itemId.id, ", name- ", itemInformation.name)
+
         return pb2.Ack()
 
     def searchItem(self, searchParameters, context):  # Returns SearchResponse
-        print("Searching")
         searchResponse = pb2.SearchResponse()
         itemInformations = []
 
@@ -229,12 +233,16 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
 
         searchResponse.searchResults.extend(itemInformations)
 
+        print("Search item: Search parameters- ", searchParameters.itemName, ", search results- ", [i.name for i in itemInformations])
+
         return searchResponse
 
     def trackItem(self, itemID, context):  # Returns Ack
         itemsLock.w_acquire()
         items_storage.setTracked(itemID.id, True)
         itemsLock.w_release()
+
+        print("Track item: ", itemID.id)
 
         return pb2.Ack()
 
@@ -243,6 +251,8 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
         items_storage.setTracked(itemID.id, False)
         itemsLock.w_release()
 
+        print("Untrack item: ", itemID.id)
+
         return pb2.Ack()
 
     def lockItem(self, itemID, context):  # Returns Ack
@@ -250,12 +260,16 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
         items_storage.setLocked(itemID.id, True)
         itemsLock.w_release()
 
+        print("Lock item: ", itemID.id)
+
         return pb2.Ack()
 
     def unlockItem(self, itemID, context):  # Returns Ack
         itemsLock.w_acquire()
         items_storage.setLocked(itemID.id, False)
         itemsLock.w_release()
+
+        print("Unlock item: ", itemID.id)
 
         return pb2.Ack()
 
@@ -268,18 +282,21 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
         footageStorage.removeData(itemID.id)
         footageLock.w_release()
 
+        print("Remove item: ", itemID.id)
+
         return pb2.Ack()
 
     def statusRequest(self, request, context):
         global smartphoneAppConnected, lastKeepaliveReceivedTime
         while smartphoneAppConnected:
-            print("Satusing")
             response = pb2.StatusResponse()
 
             lockedItemsMovedLock.r_acquire()
 
             if len(lockedItemsMoved) != 0:
                 # Locked items have been moved
+
+                print("Status Request: Locked items moved- ", lockedItemsMoved)
 
                 itemNameList = pb2.ItemNameList()
 

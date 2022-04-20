@@ -1,5 +1,6 @@
 package com.moms.app.grpc;
 
+import com.moms.app.grpc.observers.FrameObserver;
 import com.moms.app.grpc.observers.GreetObserver;
 import com.moms.app.grpc.observers.KeepAliveObserver;
 import com.moms.app.grpc.observers.LocateItemObserver;
@@ -62,6 +63,10 @@ public class CentralSystemFrontend {
         Communication.ItemId itemId = getIdFrom(id);
 
         stub.locateItem(itemId, footageReceivedObserver);
+    }
+
+    public void nextFrame(FrameObserver frameObserver) {
+        stub.nextFrame(Communication.FrameRequest.newBuilder().build(), frameObserver);
     }
 
     public void photoTaken(ByteString footageBytes, String itemName, Calendar currentTime, PhotoTakenObserver photoStatusObserver) {

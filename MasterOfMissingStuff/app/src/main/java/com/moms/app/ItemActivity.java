@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.moms.app.grpc.CentralSystemFrontend;
+import com.moms.app.grpc.observers.FrameObserver;
 import com.moms.app.grpc.observers.LocateItemObserver;
 import com.moms.app.grpc.observers.LockItemObserver;
 import com.moms.app.grpc.observers.RemoveItemObserver;
@@ -32,7 +33,9 @@ import com.moms.app.grpc.observers.TrackItemObserver;
 import com.moms.app.grpc.observers.UnlockItemObserver;
 import com.moms.app.grpc.observers.UntrackItemObserver;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -45,6 +48,9 @@ public class ItemActivity extends AppCompatActivity {
     private Switch track_switch;
     private Switch lock_switch;
     private Item item;
+    private Semaphore semaphore;
+    private Communication.Footage picture;
+    private Communication.BoundingBox box;
 
     // Other methods
 
@@ -90,7 +96,7 @@ public class ItemActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // Code here executes on main thread after user presses button
                 //startActivity(new Intent(ItemActivity.this, AddItemActivity.class));
-
+                semaphore = new Semaphore(0);
                 CentralSystemFrontend.FRONTEND.locateItem(item.getIdName(), new LocateItemObserver(ItemActivity.this));
             }
         });
@@ -141,14 +147,12 @@ public class ItemActivity extends AppCompatActivity {
 
     /**
      *  Called when footage and bounding boxes are received after locating an item
-     * @param pictures
-     *  List of pictures corresponding to the last 5 seconds of when the item was last seen
-     * @param boundingBoxes
-     *  List of Bounding boxes associated with each picture that show where the item is
+     * @param footageSize
+     *  Int corresponding to the number of frames in the footage
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void itemLocated(List<Communication.Footage> pictures, List<Communication.BoundingBox> boundingBoxes) {
-        if(pictures.isEmpty()) {
+    public void itemLocated(int footageSize) {
+        if(footageSize == 0) {
             runOnUiThread(() -> {
                 MainActivity.showPopupWindow(ItemActivity.this, "There's no footage of this item", findViewById(R.id.imageView3));
             });
@@ -183,47 +187,47 @@ public class ItemActivity extends AppCompatActivity {
                     }
                 });
 
-                //Creating a gif with the pictures
-
-                //Converting all picture's ByteStrings to Bitmaps
-                List<Bitmap> bitmaps = pictures.
-                        stream().
-                        map(f -> f.getPicture()).
-                        map(bs -> {
-                            byte[] byteArray = bs.toByteArray();
-                            return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-                        }).
-                        collect(Collectors.toList());
-
-                Paint paint=new Paint();
-                paint.setColor(Color.RED);
-                paint.setStyle(Paint.Style.STROKE);
-                paint.setStrokeWidth(5);
-
-                //Modifying the bitmaps to have rectangles drawn on them
-                for(int i = 0; i < bitmaps.size(); i++) {
-                    Bitmap bitmap = bitmaps.get(i);
-
-                    Bitmap newBitmap = bitmap.copy(bitmap.getConfig(), true);
-
-                    bitmaps.set(i, newBitmap);
-
-                    Canvas canvas = new Canvas(newBitmap);
-                    Communication.BoundingBox box = boundingBoxes.get(i);
-
-                    canvas.drawRect(box.getLow().getX(), box.getHigh().getY(), box.getHigh().getX(), box.getLow().getY(), paint);
-                }
-
                 AtomicBoolean stopShowing = new AtomicBoolean(false);
 
                 new Thread() {
-                    int i = 0;
-
                     @Override
                     public void run() {
+                        Paint paint=new Paint();
+                        paint.setColor(Color.RED);
+                        paint.setStyle(Paint.Style.STROKE);
+                        paint.setStrokeWidth(5);
+
+                        List<Bitmap> bitmaps = new ArrayList<>();
+
+                        //Creating a gif with the pictures
+                        System.out.println("Creating gif from " + footageSize + " frames");
+                        for (int i = 0; i < footageSize; i++) {
+                            CentralSystemFrontend.FRONTEND.nextFrame(new FrameObserver(ItemActivity.this));
+                            try {
+                                semaphore.acquire();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            byte[] byteArray = picture.getPicture().toByteArray();
+                            System.out.println("ByteArray len : " + byteArray.length);
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+
+                            //Modifying the bitmap to have rectangles drawn on them
+                            Bitmap newBitmap = bitmap.copy(bitmap.getConfig(), true);
+                            bitmaps.add(newBitmap);
+                            Canvas canvas = new Canvas(newBitmap);
+                            canvas.drawRect(box.getLow().getX(), box.getHigh().getY(), box.getHigh().getX(), box.getLow().getY(), paint);
+
+                            // Showing the receive frame
+                            runOnUiThread(() -> imageView.setImageBitmap(newBitmap));
+                        }
+                        System.out.println("Looping gif");
+
+                        int i = 0;
                         while(!stopShowing.get()) {
+                            int finalI = i;
                             runOnUiThread(() -> {
-                                int index = i % bitmaps.size();
+                                int index = finalI % bitmaps.size();
 
                                 Bitmap bitmap = bitmaps.get(index);
 
@@ -243,6 +247,12 @@ public class ItemActivity extends AppCompatActivity {
                 popupWindow.setOnDismissListener(() -> stopShowing.set(true));
             });
         }
+    }
+
+    public void newFrame(Communication.Footage picture, Communication.BoundingBox box) {
+        this.picture = picture;
+        this.box = box;
+        semaphore.release();
     }
 
     public void setTrackSwitch(boolean track) {

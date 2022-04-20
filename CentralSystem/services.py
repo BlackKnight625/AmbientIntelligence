@@ -32,6 +32,10 @@ smartphoneAppConnected = False
 lastKeepaliveReceivedTime = -1
 lastKeepaliveReceivedTimeout = 10
 
+pictures = []
+boundingBoxes = []
+frameIdx = 0
+
 # Service implementations
 classNames = []
 classFile = "../archive/coco.names"
@@ -150,10 +154,13 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
 
         lastSeenFootage = footageStorage.getLastSeenFootageAndInformation(itemId.id)
 
+        global pictures, boundingBoxes, frameIdx
         pictures = []
         boundingBoxes = []
+        frameIdx = 0
 
         if lastSeenFootage is not None:
+            print("doing stuff")
             for footage in lastSeenFootage:
                 picture = pb2.Footage()
 
@@ -167,12 +174,22 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
 
         footageLock.r_release()
 
-        videoFootageResponse.pictures.extend(pictures)
-        videoFootageResponse.itemBoundingBoxes.extend(boundingBoxes)
+        #videoFootageResponse.pictures.extend(pictures)
+        #videoFootageResponse.itemBoundingBoxes.extend(boundingBoxes)
+        videoFootageResponse.footageSize = len(pictures)
 
+        print(len(pictures))
         print("Locate item: Bounding boxes- ", [getCv2BoundingBoxFromGrpc(bb) for bb in boundingBoxes])
 
         return videoFootageResponse
+
+    def nextFrame(self, frameRequest, context):
+        global frameIdx
+        frame = pb2.Frame()
+        frame.picture.CopyFrom(pictures[frameIdx])
+        frame.box.CopyFrom(boundingBoxes[frameIdx])
+        frameIdx += 1
+        return frame
 
     def photoTaken(self, photoRequest, context):  # Returns PhotoResponse
         footage = photoRequest.footage

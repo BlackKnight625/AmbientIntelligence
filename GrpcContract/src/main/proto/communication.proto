@@ -37,8 +37,17 @@ message Point {
 }
 
 message VideoFootage {
-    repeated Footage pictures = 1; //Same as Java List<Footage>
-    repeated BoundingBox itemBoundingBoxes = 2;
+    int32 footageSize = 1;
+    //repeated Footage pictures = 1; //Same as Java List<Footage>
+    //repeated BoundingBox itemBoundingBoxes = 2;
+}
+
+message Frame {
+    Footage picture = 1;
+    BoundingBox box = 2;
+}
+
+message FrameRequest {
 }
 
 message BoundingBox {
@@ -182,4 +191,6 @@ service SmartphoneAppToCentralSystemService {
         returns 'CAMERA_TURNED_OFF' if a camera turned off (briefly or permanently) and a string containing a message saying what happened.
      */
     rpc statusRequest(StatusRequest) returns (stream StatusResponse);
+
+    rpc nextFrame(FrameRequest) returns (Frame);
 }

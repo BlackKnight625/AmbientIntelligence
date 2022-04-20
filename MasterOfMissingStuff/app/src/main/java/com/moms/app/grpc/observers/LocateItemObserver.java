@@ -1,5 +1,9 @@
 package com.moms.app.grpc.observers;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import com.moms.app.ItemActivity;
 
 import java.util.List;
@@ -21,9 +25,10 @@ public class LocateItemObserver implements StreamObserver<Communication.VideoFoo
 
     // Other methods
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onNext(Communication.VideoFootage value) {
-        activity.itemLocated(value.getPicturesList(), value.getItemBoundingBoxesList());
+        activity.itemLocated(value.getFootageSize());
     }
 
     @Override

@@ -92,7 +92,12 @@ class CameraToCentralSystemService(pb2_grpc.CameraToCentralSystemServiceServicer
                         lastBoundingBox = lastSeenFootage[
                             -1].boundingBox  # Fetching the BB from when the item was last seen
 
-                        if (boundingBox != lastBoundingBox).any():
+                        (picHeight, picWidth) = (len(image), len(image[0]))
+                        resolution = picHeight * picWidth
+                        tolerance = 0.00001
+                        boundingBoxDifferences = abs((boundingBox - lastBoundingBox)) / resolution
+                        #print(boundingBoxDifferences)
+                        if (boundingBoxDifferences > tolerance).any():
                             # Bounding box has moved, therefore, the item moved
                             lockedItemsMovedLock.w_acquire()
                             lockedItemsMoved.add(items_storage.getName(item))
@@ -160,7 +165,7 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
         frameIdx = 0
 
         if lastSeenFootage is not None:
-            print("doing stuff")
+            #print("doing stuff")
             for footage in lastSeenFootage:
                 picture = pb2.Footage()
 
@@ -178,7 +183,7 @@ class SmartphoneAppToCentralSystemService(pb2_grpc.SmartphoneAppToCentralSystemS
         #videoFootageResponse.itemBoundingBoxes.extend(boundingBoxes)
         videoFootageResponse.footageSize = len(pictures)
 
-        print(len(pictures))
+        #print(len(pictures))
         print("Locate item: Bounding boxes- ", [getCv2BoundingBoxFromGrpc(bb) for bb in boundingBoxes])
 
         return videoFootageResponse

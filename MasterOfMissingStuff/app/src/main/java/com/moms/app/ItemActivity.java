@@ -209,7 +209,6 @@ public class ItemActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                             byte[] byteArray = picture.getPicture().toByteArray();
-                            System.out.println("ByteArray len : " + byteArray.length);
                             Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
 
                             //Modifying the bitmap to have rectangles drawn on them
